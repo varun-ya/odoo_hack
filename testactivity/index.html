@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Maintenance Request</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI", sans-serif;
+}
+
+body{
+  background:#0b0b0b;
+  color:#fff;
+  padding:24px;
+}
+
+/* ===== WRAPPER ===== */
+.wrapper{
+  border:1px dashed #555;
+  border-radius:18px;
+  padding:26px;
+}
+
+/* ===== HEADER ===== */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.status{
+  padding:6px 16px;
+  border-radius:10px;
+  border:1px solid #fff;
+  font-size:13px;
+}
+
+.worksheet-btn{
+  padding:8px 16px;
+  border-radius:8px;
+  border:1px solid #fff;
+  background:transparent;
+  color:#fff;
+  cursor:pointer;
+}
+
+.worksheet-btn:hover{
+  background:#fff;
+  color:#000;
+}
+
+/* ===== STAGES ===== */
+.stages{
+  display:flex;
+  gap:10px;
+  margin-bottom:26px;
+}
+
+.stage{
+  padding:6px 14px;
+  border-radius:10px;
+  border:1px dashed #666;
+  font-size:13px;
+  color:#cfcfcf;
+}
+
+.stage.active{
+  border-color:#6aa9ff;
+  color:#6aa9ff;
+}
+
+/* ===== CONTENT GRID ===== */
+.grid{
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:40px;
+}
+
+/* ===== FIELD ===== */
+.field{
+  margin-bottom:18px;
+}
+
+.field label{
+  font-size:13px;
+  color:#bdbdbd;
+  display:block;
+  margin-bottom:6px;
+}
+
+.field p{
+  font-size:14px;
+  padding-bottom:6px;
+  border-bottom:1px solid #333;
+}
+
+/* ===== RADIO ===== */
+.radio-group{
+  display:flex;
+  gap:18px;
+  font-size:14px;
+}
+
+.radio-group span{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+/* ===== NOTES ===== */
+.tabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:8px;
+}
+
+.tab{
+  padding:6px 12px;
+  border:1px solid #555;
+  border-radius:8px;
+  font-size:13px;
+}
+
+.textarea{
+  height:120px;
+  border:1px dashed #444;
+  border-radius:12px;
+  padding:12px;
+  font-size:13px;
+  color:#cfcfcf;
+}
+
+.hidden {
+  display:none;
+}
+
+/* ===== RIGHT SIDE ===== */
+.right{
+  border-left:1px dashed #333;
+  padding-left:30px;
+}
+
+/* ===== PRIORITY ===== */
+.priority{
+  display:flex;
+  gap:8px;
+}
+
+.priority span{
+  width:22px;
+  height:22px;
+  border-radius:6px;
+  border:1px solid #777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="status">New</div>
+    <button class="worksheet-btn">Worksheet</button>
+  </div>
+
+  <!-- STAGES -->
+  <div class="stages">
+    <div class="stage active">New Request</div>
+    <div class="stage">In Progress</div>
+    <div class="stage">Repaired</div>
+    <div class="stage">Scrap</div>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid">
+
+    <!-- LEFT -->
+    <div>
+
+      <div class="field">
+        <label>Subject</label>
+        <p>Test activity</p>
+      </div>
+
+      <div class="field">
+        <label>Created By</label>
+        <p>Mitchell Admin</p>
+      </div>
+
+      <div class="field">
+        <label>Maintenance For</label>
+        <select id="maintenanceFor" style="width:320px;background:#111;color:#fff;border:1px solid #444;padding:8px 10px;border-radius:8px;outline:none;">
+          <option value="equipment">Equipment</option>
+          <option value="workcenter">Work Center</option>
+        </select>
+      </div>
+
+      <div class="field" id="equipmentField">
+        <label>Equipment</label>
+        <select style="width:320px;background:#111;color:#fff;border:1px solid #444;padding:8px 10px;border-radius:8px;outline:none;">
+          <option>Acer Laptop / LP / 203</option>
+          <option>Printer / PR / 102</option>
+          <option>CNC Machine / CN / 88</option>
+        </select>
+      </div>
+
+      <div class="field hidden" id="workCenterField">
+        <label>Work Center</label>
+        <select style="width:320px;background:#111;color:#fff;border:1px solid #444;padding:8px 10px;border-radius:8px;outline:none;">
+          <option>Assembly Line A</option>
+          <option>Packaging Unit B</option>
+          <option>Quality Control Lab</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Category</label>
+        <p>Computers</p>
+      </div>
+
+      <div class="field">
+        <label>Request Date</label>
+        <p>12 / 18 / 2025</p>
+      </div>
+
+      <div class="field">
+        <label>Maintenance Type</label>
+        <div class="radio-group">
+          <span>● Corrective</span>
+          <span>○ Preventive</span>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab">Notes</div>
+        <div class="tab">Instructions</div>
+      </div>
+
+      <div class="textarea">
+        Add notes or instructions here...
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+
+      <div class="field">
+        <label>Team</label>
+        <p>Internal Maintenance</p>
+      </div>
+
+      <div class="field">
+        <label>Technician</label>
+        <p>Aka Foster</p>
+      </div>
+
+      <div class="field">
+        <label>Scheduled Date</label>
+        <p>12 / 28 / 2025 14:30</p>
+      </div>
+
+      <div class="field">
+        <label>Duration</label>
+        <p>00 : 00 hours</p>
+      </div>
+
+      <div class="field">
+        <label>Priority</label>
+        <div class="priority">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Company</label>
+        <p>My Company (San Francisco)</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const maintenanceFor = document.getElementById("maintenanceFor");
+const equipmentField = document.getElementById("equipmentField");
+const workCenterField = document.getElementById("workCenterField");
+
+maintenanceFor.addEventListener("change", function () {
+  if (this.value === "workcenter") {
+    equipmentField.classList.add("hidden");
+    workCenterField.classList.remove("hidden");
+    // Navigate to work center page
+    window.location.href = "../work-center/index.html";
+  } else {
+    workCenterField.classList.add("hidden");
+    equipmentField.classList.remove("hidden");
+  }
+});
+
+// Navigate to equipment page when equipment dropdown is clicked
+document.querySelector('#equipmentField select').addEventListener('click', function() {
+  window.location.href = '../equipment/index.html';
+});
+
+// Check if work center was selected
+window.addEventListener('load', function() {
+  const selectedWorkCenter = localStorage.getItem('selectedWorkCenter');
+  const selectedEquipment = localStorage.getItem('selectedEquipment');
+  
+  if (selectedWorkCenter) {
+    document.getElementById('maintenanceFor').value = 'workcenter';
+    equipmentField.classList.add('hidden');
+    workCenterField.classList.remove('hidden');
+    workCenterField.querySelector('select').innerHTML = `<option>${selectedWorkCenter}</option>`;
+    localStorage.removeItem('selectedWorkCenter');
+  }
+  
+  if (selectedEquipment) {
+    document.getElementById('maintenanceFor').value = 'equipment';
+    workCenterField.classList.add('hidden');
+    equipmentField.classList.remove('hidden');
+    equipmentField.querySelector('select').innerHTML = `<option>${selectedEquipment}</option>`;
+    localStorage.removeItem('selectedEquipment');
+  }
+});
+</script>
+
+</body>
+</html>

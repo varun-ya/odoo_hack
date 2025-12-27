@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Work Centers</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI", sans-serif;
+}
+
+body{
+  background:#0b0b0b;
+  color:#fff;
+  padding:24px;
+}
+
+/* ===== CONTAINER ===== */
+.container{
+  border:1px solid #333;
+  border-radius:16px;
+  padding:20px;
+}
+
+/* ===== HEADER ===== */
+.header{
+  font-size:18px;
+  margin-bottom:18px;
+  color:#ffffff;
+}
+
+/* ===== TABLE ===== */
+.table-wrapper{
+  border:1px solid #2a2a2a;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+thead{
+  background:#121212;
+}
+
+th, td{
+  padding:14px;
+  text-align:left;
+  font-size:13px;
+}
+
+th{
+  color:#bdbdbd;
+  font-weight:500;
+}
+
+tbody tr{
+  border-top:1px dashed #333;
+  cursor:pointer;
+}
+
+tbody tr:hover{
+  background:#151515;
+}
+
+/* ===== NUMERIC ALIGN ===== */
+.right{
+  text-align:right;
+}
+
+/* ===== TAG ===== */
+.tag{
+  padding:4px 10px;
+  border-radius:8px;
+  border:1px solid #555;
+  font-size:12px;
+  color:#cfcfcf;
+  display:inline-block;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">Work Centers</div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Work Center</th>
+          <th>Code</th>
+          <th>Tag</th>
+          <th>Alternative Workcenters</th>
+          <th class="right">Cost per hour</th>
+          <th class="right">Capacity</th>
+          <th class="right">Time Efficiency</th>
+          <th class="right">OEE Target</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr onclick="selectWorkCenter('Drill 1')">
+          <td>Drill 1</td>
+          <td>DRL-01</td>
+          <td><span class="tag">Manufacturing</span></td>
+          <td>Drill 2</td>
+          <td class="right">1.00</td>
+          <td class="right">1.00</td>
+          <td class="right">100.00</td>
+          <td class="right">34.59</td>
+        </tr>
+
+        <tr onclick="selectWorkCenter('Lathe Machine')">
+          <td>Lathe Machine</td>
+          <td>LTH-02</td>
+          <td><span class="tag">Assembly</span></td>
+          <td>Lathe Backup</td>
+          <td class="right">1.00</td>
+          <td class="right">1.00</td>
+          <td class="right">100.00</td>
+          <td class="right">90.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+function selectWorkCenter(workCenterName) {
+  localStorage.setItem('selectedWorkCenter', workCenterName);
+  window.location.href = '../testactivity/index.html';
+}
+</script>
+
+</body>
+</html>
