@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GearGuard: The Ultimate Maintenance Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <h1>GearGuard: The Ultimate Maintenance Tracker</h1>
+        <nav>
+            <a href="#dashboard">Dashboard</a>
+            <a href="#equipment">Equipment</a>
+            <a href="#teams">Teams</a>
+            <a href="#requests">Requests</a>
+            <a href="#calendar">Calendar</a>
+            <div class="user-menu">
+                <span id="userName">Welcome</span>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section id="dashboard" class="dashboard">
+            <div class="stats-grid">
+                <div class="stat-card critical">
+                    <h3>Critical Equipment</h3>
+                    <div class="stat-number">5</div>
+                    <p>Units (Health < 30%)</p>
+                </div>
+                <div class="stat-card warning">
+                    <h3>Technician Load</h3>
+                    <div class="stat-number">85%</div>
+                    <p>Utilized (Assign Carefully)</p>
+                </div>
+                <div class="stat-card success">
+                    <h3>Completed Today</h3>
+                    <div class="stat-number">12</div>
+                    <p>Maintenance Tasks</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="equipment" class="equipment-section">
+            <h2>Equipment Management</h2>
+            <button class="btn-primary" onclick="showEquipmentForm()">Add Equipment</button>
+            <div class="equipment-grid">
+                <div class="equipment-card">
+                    <h4>Generator #001</h4>
+                    <p>Serial: GEN-2024-001</p>
+                    <p>Department: Production</p>
+                    <p>Team: Mechanics</p>
+                    <button class="smart-btn" onclick="showMaintenanceRequests('GEN-001')">
+                        Maintenance (3)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="requests" class="kanban-section">
+            <h2>Maintenance Requests</h2>
+            <div class="kanban-board">
+                <div class="kanban-column">
+                    <h3>New</h3>
+                    <div class="kanban-card" draggable="true">
+                        <h4>Generator Repair</h4>
+                        <p>Equipment: GEN-001</p>
+                        <p>Team: Mechanics</p>
+                        <div class="technician-avatar">JD</div>
+                    </div>
+                </div>
+                <div class="kanban-column">
+                    <h3>In Progress</h3>
+                    <div class="kanban-card" draggable="true">
+                        <h4>AC Maintenance</h4>
+                        <p>Equipment: AC-002</p>
+                        <p>Team: HVAC</p>
+                        <div class="technician-avatar">MS</div>
+                    </div>
+                </div>
+                <div class="kanban-column">
+                    <h3>Repaired</h3>
+                    <div class="kanban-card" draggable="true">
+                        <h4>Printer Fix</h4>
+                        <p>Equipment: PR-003</p>
+                        <p>Team: IT Support</p>
+                        <div class="technician-avatar">AB</div>
+                    </div>
+                </div>
+                <div class="kanban-column">
+                    <h3>Scrap</h3>
+                </div>
+            </div>
+        </section>
+
+        <section id="calendar" class="calendar-section">
+            <h2>Preventive Maintenance Calendar</h2>
+            <div class="calendar-grid">
+                <div class="calendar-day" onclick="createPreventiveRequest('2024-01-15')">
+                    <span class="day-number">15</span>
+                    <div class="maintenance-item">Generator Check</div>
+                </div>
+                <div class="calendar-day">
+                    <span class="day-number">16</span>
+                </div>
+                <div class="calendar-day">
+                    <span class="day-number">17</span>
+                    <div class="maintenance-item">AC Service</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="equipmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Add Equipment</h3>
+            <form id="equipmentForm">
+                <input type="text" placeholder="Equipment Name" required>
+                <input type="text" placeholder="Serial Number" required>
+                <input type="date" placeholder="Purchase Date" required>
+                <input type="text" placeholder="Warranty Info">
+                <input type="text" placeholder="Location" required>
+                <select required>
+                    <option value="">Select Department</option>
+                    <option value="production">Production</option>
+                    <option value="it">IT</option>
+                    <option value="facilities">Facilities</option>
+                </select>
+                <select required>
+                    <option value="">Select Team</option>
+                    <option value="mechanics">Mechanics</option>
+                    <option value="electricians">Electricians</option>
+                    <option value="it-support">IT Support</option>
+                </select>
+                <button type="submit" class="btn-primary">Save Equipment</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = 'sign/index.html';
+                return;
+            }
+            
+            document.getElementById('userName').textContent = `Welcome, ${currentUser.name}`;
+            showSection('dashboard');
+            
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('href').substring(1);
+                    showSection(section);
+                });
+            });
+        });
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'sign/index.html';
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+        }
+
+        function showEquipmentForm() {
+            document.getElementById('equipmentModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('equipmentModal').style.display = 'none';
+        }
+
+        function showMaintenanceRequests(equipmentId) {
+            alert(`Maintenance Requests for ${equipmentId}`);
+        }
+
+        function createPreventiveRequest(date) {
+            const subject = prompt('Enter maintenance subject:');
+            if (subject) {
+                alert(`Preventive maintenance "${subject}" scheduled for ${date}`);
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('equipmentModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

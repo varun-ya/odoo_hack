@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GearGuard - Sign Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: #0b0b0b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffffff;
+    }
+
+    .signup-box {
+      width: 460px;
+      padding: 40px;
+      border-radius: 18px;
+      border: 1px solid #2a2a2a;
+      background: linear-gradient(145deg, #0d0d0d, #121212);
+    }
+
+    .title {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #cfcfcf;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #555;
+      padding: 10px 4px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-bottom-color: #ffffff;
+    }
+
+    .signup-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ffffff;
+      background: transparent;
+      color: #ffffff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .signup-btn:hover {
+      background: #ffffff;
+      color: #000000;
+    }
+
+    .error {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #ff4d4d;
+      text-align: center;
+      display: none;
+    }
+
+    .success {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #66ff99;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="signup-box">
+    <div class="title">GearGuard Sign Up</div>
+
+    <form id="signupForm">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="name" required />
+      </div>
+
+      <div class="form-group">
+        <label>Email id</label>
+        <input type="email" id="email" required />
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" required />
+      </div>
+
+      <div class="form-group">
+        <label>Re-Enter Password</label>
+        <input type="password" id="confirmPassword" required />
+      </div>
+
+      <button type="submit" class="signup-btn">Sign Up</button>
+
+      <div class="error" id="errorMsg"></div>
+      <div class="success" id="successMsg">Account created successfully</div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("signupForm");
+    const errorMsg = document.getElementById("errorMsg");
+    const successMsg = document.getElementById("successMsg");
+
+    function isStrongPassword(password) {
+      const regex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{9,}$/;
+      return regex.test(password);
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      errorMsg.style.display = "none";
+      successMsg.style.display = "none";
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+      let users = JSON.parse(localStorage.getItem("portalUsers")) || [];
+
+      // 1. Email duplicate check
+      const emailExists = users.some(user => user.email === email);
+      if (emailExists) {
+        errorMsg.textContent = "Email already exists";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      // 2. Password strength validation
+      if (!isStrongPassword(password)) {
+        errorMsg.textContent =
+          "Password must be more than 8 characters and contain uppercase, lowercase and special character";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      // 3. Password match check
+      if (password !== confirmPassword) {
+        errorMsg.textContent = "Passwords do not match";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      // Create portal user (mock DB)
+      users.push({
+        name,
+        email,
+        password
+      });
+
+      localStorage.setItem("portalUsers", JSON.stringify(users));
+
+      successMsg.style.display = "block";
+      form.reset();
+      
+      // Redirect to login after 2 seconds
+      setTimeout(() => {
+        window.location.href = "../sign/index.html";
+      }, 2000);
+    });
+  </script>
+
+</body>
+</html>
