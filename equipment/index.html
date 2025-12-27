@@ -102,17 +102,6 @@ tbody tr:hover{
   background:#151515;
 }
 
-/* ===== LINK STYLE ===== */
-.link{
-  color:#6aa9ff;
-  cursor:pointer;
-  text-decoration:none;
-}
-
-.link:hover{
-  text-decoration:underline;
-}
-
 /* ===== ACTION BUTTONS ===== */
 .actions{
   display:flex;
@@ -213,6 +202,17 @@ tbody tr:hover{
   color:#000;
   cursor:pointer;
 }
+
+/* ===== CATEGORY LINK ===== */
+.category-link{
+  color:#6aa9ff;
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+.category-link:hover{
+  color:#ffffff;
+}
 </style>
 </head>
 
@@ -222,6 +222,7 @@ tbody tr:hover{
 
   <!-- TOP BAR -->
   <div class="top-bar">
+    <button class="new-btn" onclick="goBack()">Back</button>
     <button class="new-btn" onclick="openModal()">New</button>
 
     <div class="search-box">
@@ -248,12 +249,12 @@ tbody tr:hover{
 
       <tbody id="equipmentTable">
         <tr>
-          <td><a class="link" onclick="selectEquipment('Samsung Monitor 15&quot;')">Samsung Monitor 15"</a></td>
+          <td>Samsung Monitor 15"</td>
           <td>Tejas Modi</td>
           <td>Admin</td>
           <td>MT/25/2278</td>
           <td>Mitchell Admin</td>
-          <td>Monitors</td>
+          <td><span class="category-link" onclick="openCategory('Monitors')">Monitors</span></td>
           <td>My Company (San Francisco)</td>
           <td>
             <div class="actions">
@@ -264,12 +265,12 @@ tbody tr:hover{
         </tr>
 
         <tr>
-          <td><a class="link" onclick="selectEquipment('Acer Laptop')">Acer Laptop</a></td>
+          <td>Acer Laptop</td>
           <td>—</td>
           <td>Technician</td>
           <td>MT/122/11112222</td>
           <td>Marc Demo</td>
-          <td>Computers</td>
+          <td><span class="category-link" onclick="openCategory('Computers')">Computers</span></td>
           <td>My Company (San Francisco)</td>
           <td>
             <div class="actions">
@@ -344,11 +345,6 @@ tbody tr:hover{
 <script>
 let editingRow = null;
 
-function selectEquipment(equipmentName) {
-  localStorage.setItem('selectedEquipment', equipmentName);
-  window.location.href = '../testactivity/index.html';
-}
-
 function openModal() {
   document.getElementById('modalTitle').textContent = 'Add Equipment';
   document.getElementById('equipmentForm').reset();
@@ -365,22 +361,35 @@ function editEquipment(btn) {
   const row = btn.closest('tr');
   const cells = row.cells;
   
-  document.getElementById('modalTitle').textContent = 'Edit Equipment';
-  document.getElementById('equipmentName').value = cells[0].textContent;
-  document.getElementById('employee').value = cells[1].textContent === '—' ? '' : cells[1].textContent;
-  document.getElementById('department').value = cells[2].textContent;
-  document.getElementById('serialNumber').value = cells[3].textContent;
-  document.getElementById('technician').value = cells[4].textContent;
-  document.getElementById('category').value = cells[5].textContent;
-  document.getElementById('company').value = cells[6].textContent;
+  // Store equipment data for detail page
+  const equipmentData = {
+    name: cells[0].textContent,
+    employee: cells[1].textContent,
+    department: cells[2].textContent,
+    serial: cells[3].textContent,
+    technician: cells[4].textContent,
+    category: cells[5].textContent,
+    company: cells[6].textContent
+  };
   
-  editingRow = row;
-  document.getElementById('equipmentModal').style.display = 'block';
+  localStorage.setItem('selectedEquipmentData', JSON.stringify(equipmentData));
+  window.location.href = 'equipment-detail.html';
 }
 
 function deleteEquipment(btn) {
   if (confirm('Are you sure you want to delete this equipment?')) {
-    btn.closest('tr').remove();
+    const row = btn.closest('tr');
+    const equipmentName = row.cells[0].textContent;
+    
+    // Remove from equipment list
+    const equipmentList = JSON.parse(localStorage.getItem('equipmentList')) || [];
+    const index = equipmentList.indexOf(equipmentName);
+    if (index > -1) {
+      equipmentList.splice(index, 1);
+      localStorage.setItem('equipmentList', JSON.stringify(equipmentList));
+    }
+    
+    row.remove();
   }
 }
 
@@ -397,9 +406,18 @@ document.getElementById('equipmentForm').addEventListener('submit', function(e) 
     company: document.getElementById('company').value
   };
   
+  // Update equipment list in localStorage
+  const equipmentList = JSON.parse(localStorage.getItem('equipmentList')) || ['Samsung Monitor 15"', 'Acer Laptop'];
+  
   if (editingRow) {
     // Update existing row
-    editingRow.cells[0].innerHTML = `<a class="link" onclick="selectEquipment('${formData.name}')">${formData.name}</a>`;
+    const oldName = editingRow.cells[0].textContent;
+    const index = equipmentList.indexOf(oldName);
+    if (index > -1) {
+      equipmentList[index] = formData.name;
+    }
+    
+    editingRow.cells[0].textContent = formData.name;
     editingRow.cells[1].textContent = formData.employee;
     editingRow.cells[2].textContent = formData.department;
     editingRow.cells[3].textContent = formData.serial;
@@ -407,16 +425,19 @@ document.getElementById('equipmentForm').addEventListener('submit', function(e) 
     editingRow.cells[5].textContent = formData.category;
     editingRow.cells[6].textContent = formData.company;
   } else {
+    // Add new equipment to list
+    equipmentList.push(formData.name);
+    
     // Add new row
     const table = document.getElementById('equipmentTable');
     const newRow = table.insertRow();
     newRow.innerHTML = `
-      <td><a class="link" onclick="selectEquipment('${formData.name}')">${formData.name}</a></td>
+      <td>${formData.name}</td>
       <td>${formData.employee}</td>
       <td>${formData.department}</td>
       <td>${formData.serial}</td>
       <td>${formData.technician}</td>
-      <td>${formData.category}</td>
+      <td><span class="category-link" onclick="openCategory('${formData.category}')">${formData.category}</span></td>
       <td>${formData.company}</td>
       <td>
         <div class="actions">
@@ -427,6 +448,9 @@ document.getElementById('equipmentForm').addEventListener('submit', function(e) 
     `;
   }
   
+  // Save updated equipment list
+  localStorage.setItem('equipmentList', JSON.stringify(equipmentList));
+  
   closeModal();
 });
 
@@ -436,6 +460,15 @@ window.onclick = function(event) {
   if (event.target === modal) {
     closeModal();
   }
+}
+
+function goBack() {
+  window.location.href = '../index.html';
+}
+
+function openCategory(categoryName) {
+  localStorage.setItem('selectedCategory', categoryName);
+  window.location.href = 'equipment-categories.html';
 }
 </script>
 
