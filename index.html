@@ -1,207 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GearGuard: The Ultimate Maintenance Tracker</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<title>Maintenance Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #0b0b0b;
+  color: #fff;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 14px 30px;
+  border-bottom: 1px solid #222;
+}
+
+.navbar h2 {
+  font-size: 18px;
+  margin-right: 40px;
+}
+
+.nav-links a {
+  margin-right: 25px;
+  text-decoration: none;
+  color: #cfcfcf;
+  font-size: 14px;
+}
+
+.nav-links a.active {
+  color: #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
+/* ===== TOP ACTION BAR ===== */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 25px 30px 10px;
+}
+
+/* New Button */
+.new-btn {
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: 1px solid #ffffff;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.new-btn:hover {
+  background: #ffffff;
+  color: #000;
+}
+
+/* Search Bar */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #f1f1f1;
+  border-radius: 8px;
+  width: 420px;
+  padding: 6px 10px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  font-size: 14px;
+}
+
+.search-box span {
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ===== DASHBOARD ===== */
+.dashboard {
+  padding: 20px 30px 30px;
+}
+
+/* ===== CARDS ===== */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  padding: 22px;
+  border-radius: 14px;
+  border: 1px solid #2a2a2a;
+}
+
+.card.red {
+  background: #1a0f0f;
+  border-color: #ff4d4d;
+}
+
+.card.red h3 {
+  color: #ff4d4d;
+}
+
+.card.blue {
+  background: #0e1a26;
+  border-color: #3a7bd5;
+}
+
+.card.blue h3 {
+  color: #5fa8ff;
+}
+
+.card.green {
+  background: #0f1a14;
+  border-color: #2ecc71;
+}
+
+.card.green h3 {
+  color: #2ecc71;
+}
+
+.card h3 {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 14px;
+  color: #cfcfcf;
+}
+
+/* ===== TABLE ===== */
+.table-container {
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #121212;
+}
+
+th, td {
+  padding: 14px;
+  text-align: left;
+  font-size: 13px;
+}
+
+th {
+  color: #bdbdbd;
+}
+
+tbody tr {
+  border-top: 1px dashed #333;
+}
+
+tbody tr:hover {
+  background: #151515;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.badge.new {
+  background: #1f3b5c;
+  color: #6aa9ff;
+}
+</style>
 </head>
+
 <body>
-    <header class="header">
-        <h1>GearGuard: The Ultimate Maintenance Tracker</h1>
-        <nav>
-            <a href="#dashboard">Dashboard</a>
-            <a href="#equipment">Equipment</a>
-            <a href="#teams">Teams</a>
-            <a href="#requests">Requests</a>
-            <a href="#calendar">Calendar</a>
-            <div class="user-menu">
-                <span id="userName">Welcome</span>
-                <button onclick="logout()" class="logout-btn">Logout</button>
-            </div>
-        </nav>
-    </header>
 
-    <main class="main-content">
-        <section id="dashboard" class="dashboard">
-            <div class="stats-grid">
-                <div class="stat-card critical">
-                    <h3>Critical Equipment</h3>
-                    <div class="stat-number">5</div>
-                    <p>Units (Health < 30%)</p>
-                </div>
-                <div class="stat-card warning">
-                    <h3>Technician Load</h3>
-                    <div class="stat-number">85%</div>
-                    <p>Utilized (Assign Carefully)</p>
-                </div>
-                <div class="stat-card success">
-                    <h3>Completed Today</h3>
-                    <div class="stat-number">12</div>
-                    <p>Maintenance Tasks</p>
-                </div>
-            </div>
-        </section>
+<!-- NAVBAR -->
+<div class="navbar">
+  <h2>Maintenance</h2>
+  <div class="nav-links">
+    <a class="active">Dashboard</a>
+    <a>Maintenance Calendar</a>
+    <a>Equipment</a>
+    <a>Reporting</a>
+    <a>Teams</a>
+  </div>
+</div>
 
-        <section id="equipment" class="equipment-section">
-            <h2>Equipment Management</h2>
-            <button class="btn-primary" onclick="showEquipmentForm()">Add Equipment</button>
-            <div class="equipment-grid">
-                <div class="equipment-card">
-                    <h4>Generator #001</h4>
-                    <p>Serial: GEN-2024-001</p>
-                    <p>Department: Production</p>
-                    <p>Team: Mechanics</p>
-                    <button class="smart-btn" onclick="showMaintenanceRequests('GEN-001')">
-                        Maintenance (3)
-                    </button>
-                </div>
-            </div>
-        </section>
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="new-btn">New</button>
 
-        <section id="requests" class="kanban-section">
-            <h2>Maintenance Requests</h2>
-            <div class="kanban-board">
-                <div class="kanban-column">
-                    <h3>New</h3>
-                    <div class="kanban-card" draggable="true">
-                        <h4>Generator Repair</h4>
-                        <p>Equipment: GEN-001</p>
-                        <p>Team: Mechanics</p>
-                        <div class="technician-avatar">JD</div>
-                    </div>
-                </div>
-                <div class="kanban-column">
-                    <h3>In Progress</h3>
-                    <div class="kanban-card" draggable="true">
-                        <h4>AC Maintenance</h4>
-                        <p>Equipment: AC-002</p>
-                        <p>Team: HVAC</p>
-                        <div class="technician-avatar">MS</div>
-                    </div>
-                </div>
-                <div class="kanban-column">
-                    <h3>Repaired</h3>
-                    <div class="kanban-card" draggable="true">
-                        <h4>Printer Fix</h4>
-                        <p>Equipment: PR-003</p>
-                        <p>Team: IT Support</p>
-                        <div class="technician-avatar">AB</div>
-                    </div>
-                </div>
-                <div class="kanban-column">
-                    <h3>Scrap</h3>
-                </div>
-            </div>
-        </section>
+  <div class="search-box">
+    🔍
+    <input type="text" placeholder="Search..." />
+    <span>▾</span>
+  </div>
+</div>
 
-        <section id="calendar" class="calendar-section">
-            <h2>Preventive Maintenance Calendar</h2>
-            <div class="calendar-grid">
-                <div class="calendar-day" onclick="createPreventiveRequest('2024-01-15')">
-                    <span class="day-number">15</span>
-                    <div class="maintenance-item">Generator Check</div>
-                </div>
-                <div class="calendar-day">
-                    <span class="day-number">16</span>
-                </div>
-                <div class="calendar-day">
-                    <span class="day-number">17</span>
-                    <div class="maintenance-item">AC Service</div>
-                </div>
-            </div>
-        </section>
-    </main>
+<!-- DASHBOARD -->
+<div class="dashboard">
 
-    <div id="equipmentModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3>Add Equipment</h3>
-            <form id="equipmentForm">
-                <input type="text" placeholder="Equipment Name" required>
-                <input type="text" placeholder="Serial Number" required>
-                <input type="date" placeholder="Purchase Date" required>
-                <input type="text" placeholder="Warranty Info">
-                <input type="text" placeholder="Location" required>
-                <select required>
-                    <option value="">Select Department</option>
-                    <option value="production">Production</option>
-                    <option value="it">IT</option>
-                    <option value="facilities">Facilities</option>
-                </select>
-                <select required>
-                    <option value="">Select Team</option>
-                    <option value="mechanics">Mechanics</option>
-                    <option value="electricians">Electricians</option>
-                    <option value="it-support">IT Support</option>
-                </select>
-                <button type="submit" class="btn-primary">Save Equipment</button>
-            </form>
-        </div>
+  <div class="cards">
+    <div class="card red">
+      <h3>Critical Equipment</h3>
+      <p><strong>5 Units</strong></p>
+      <p>Health &lt; 30%</p>
     </div>
 
-    <script>
-        // Check authentication on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) {
-                window.location.href = 'sign/index.html';
-                return;
-            }
-            
-            document.getElementById('userName').textContent = `Welcome, ${currentUser.name}`;
-            showSection('dashboard');
-            
-            document.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const section = this.getAttribute('href').substring(1);
-                    showSection(section);
-                });
-            });
-        });
+    <div class="card blue">
+      <h3>Technician Load</h3>
+      <p><strong>85% Utilized</strong></p>
+      <p>Assign Carefully</p>
+    </div>
 
-        function logout() {
-            localStorage.removeItem('currentUser');
-            window.location.href = 'sign/index.html';
-        }
+    <div class="card green">
+      <h3>Open Requests</h3>
+      <p><strong>12 Pending</strong></p>
+      <p>3 Overdue</p>
+    </div>
+  </div>
 
-        function showSection(sectionId) {
-            document.querySelectorAll('section').forEach(section => {
-                section.style.display = 'none';
-            });
-            
-            const targetSection = document.getElementById(sectionId);
-            if (targetSection) {
-                targetSection.style.display = 'block';
-            }
-        }
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Employee</th>
+          <th>Technician</th>
+          <th>Category</th>
+          <th>Stage</th>
+          <th>Company</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Test activity</td>
+          <td>Mitchell Admin</td>
+          <td>Oster</td>
+          <td>Computer</td>
+          <td><span class="badge new">New Request</span></td>
+          <td>My Company</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-        function showEquipmentForm() {
-            document.getElementById('equipmentModal').style.display = 'block';
-        }
+</div>
 
-        function closeModal() {
-            document.getElementById('equipmentModal').style.display = 'none';
-        }
-
-        function showMaintenanceRequests(equipmentId) {
-            alert(`Maintenance Requests for ${equipmentId}`);
-        }
-
-        function createPreventiveRequest(date) {
-            const subject = prompt('Enter maintenance subject:');
-            if (subject) {
-                alert(`Preventive maintenance "${subject}" scheduled for ${date}`);
-            }
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('equipmentModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        }
-    </script>
 </body>
 </html>
