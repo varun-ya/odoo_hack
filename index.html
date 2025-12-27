@@ -202,7 +202,7 @@ tbody tr:hover {
   <div class="nav-links">
     <a class="active">Dashboard</a>
     <a>Maintenance Calendar</a>
-    <a>Equipment</a>
+    <a onclick="openEquipment()" style="cursor: pointer;">Equipment</a>
     <a>Reporting</a>
     <a>Teams</a>
   </div>
@@ -272,6 +272,10 @@ tbody tr:hover {
 <script>
 function openTestActivity() {
   window.location.href = 'testactivity/index.html';
+}
+
+function openEquipment() {
+  window.location.href = 'equipment/index.html';
 }
 </script>
 
