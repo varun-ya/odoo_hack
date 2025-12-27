@@ -158,6 +158,17 @@ body{
   border-radius:6px;
   border:1px solid #777;
 }
+
+/* ===== SELECT STYLES ===== */
+.select-field{
+  width:320px;
+  background:#111;
+  color:#fff;
+  border:1px solid #444;
+  padding:8px 10px;
+  border-radius:8px;
+  outline:none;
+}
 </style>
 </head>
 
@@ -167,7 +178,10 @@ body{
 
   <!-- HEADER -->
   <div class="header">
-    <div class="status">New</div>
+    <div>
+      <button class="worksheet-btn" onclick="goBack()">Back</button>
+      <span class="status">New</span>
+    </div>
     <button class="worksheet-btn">Worksheet</button>
   </div>
 
@@ -197,7 +211,7 @@ body{
 
       <div class="field">
         <label>Maintenance For</label>
-        <select id="maintenanceFor" style="width:320px;background:#111;color:#fff;border:1px solid #444;padding:8px 10px;border-radius:8px;outline:none;">
+        <select id="maintenanceFor" class="select-field" title="Select maintenance type">
           <option value="equipment">Equipment</option>
           <option value="workcenter">Work Center</option>
         </select>
@@ -205,16 +219,15 @@ body{
 
       <div class="field" id="equipmentField">
         <label>Equipment</label>
-        <select style="width:320px;background:#111;color:#fff;border:1px solid #444;padding:8px 10px;border-radius:8px;outline:none;">
-          <option>Acer Laptop / LP / 203</option>
-          <option>Printer / PR / 102</option>
-          <option>CNC Machine / CN / 88</option>
+        <select id="equipmentSelect" class="select-field" title="Select equipment">
+          <option>Samsung Monitor 15"</option>
+          <option>Acer Laptop</option>
         </select>
       </div>
 
       <div class="field hidden" id="workCenterField">
         <label>Work Center</label>
-        <select style="width:320px;background:#111;color:#fff;border:1px solid #444;padding:8px 10px;border-radius:8px;outline:none;">
+        <select class="select-field" title="Select work center">
           <option>Assembly Line A</option>
           <option>Packaging Unit B</option>
           <option>Quality Control Lab</option>
@@ -310,13 +323,29 @@ maintenanceFor.addEventListener("change", function () {
   }
 });
 
-// Navigate to equipment page when equipment dropdown is clicked
-document.querySelector('#equipmentField select').addEventListener('click', function() {
-  window.location.href = '../equipment/index.html';
-});
+
+
+// Load equipment from localStorage and populate dropdown
+function loadEquipmentList() {
+  const equipmentList = JSON.parse(localStorage.getItem('equipmentList')) || [
+    'Samsung Monitor 15"',
+    'Acer Laptop'
+  ];
+  
+  const equipmentSelect = document.getElementById('equipmentSelect');
+  equipmentSelect.innerHTML = '';
+  
+  equipmentList.forEach(equipment => {
+    const option = document.createElement('option');
+    option.textContent = equipment;
+    equipmentSelect.appendChild(option);
+  });
+}
 
 // Check if work center was selected
 window.addEventListener('load', function() {
+  loadEquipmentList();
+  
   const selectedWorkCenter = localStorage.getItem('selectedWorkCenter');
   const selectedEquipment = localStorage.getItem('selectedEquipment');
   
@@ -336,6 +365,12 @@ window.addEventListener('load', function() {
     localStorage.removeItem('selectedEquipment');
   }
 });
+</script>
+
+<script>
+function goBack() {
+  window.location.href = '../index.html';
+}
 </script>
 
 </body>
