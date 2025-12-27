@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Equipment Maintenance Requests</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI", sans-serif;
+}
+
+body{
+  background:#0b0b0b;
+  color:#fff;
+  padding:24px;
+}
+
+.container{
+  border:1px solid #333;
+  border-radius:16px;
+  padding:20px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.header h2{
+  font-size:18px;
+  color:#ffffff;
+}
+
+.new-btn{
+  padding:8px 16px;
+  border-radius:8px;
+  border:1px solid #fff;
+  background:transparent;
+  color:#fff;
+  cursor:pointer;
+}
+
+.new-btn:hover{
+  background:#fff;
+  color:#000;
+}
+
+.table-wrapper{
+  border:1px solid #2a2a2a;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+thead{
+  background:#121212;
+}
+
+th, td{
+  padding:14px;
+  text-align:left;
+  font-size:13px;
+}
+
+th{
+  color:#bdbdbd;
+  font-weight:500;
+}
+
+tbody tr{
+  border-top:1px dashed #333;
+  cursor:pointer;
+}
+
+tbody tr:hover{
+  background:#151515;
+}
+
+.status{
+  padding:4px 8px;
+  border-radius:6px;
+  font-size:12px;
+  border:1px solid;
+}
+
+.status.new{
+  border-color:#6aa9ff;
+  color:#6aa9ff;
+}
+
+.status.progress{
+  border-color:#ffa500;
+  color:#ffa500;
+}
+
+.status.completed{
+  border-color:#4caf50;
+  color:#4caf50;
+}
+
+.priority{
+  display:flex;
+  gap:2px;
+}
+
+.priority span{
+  width:8px;
+  height:8px;
+  border-radius:2px;
+  background:#333;
+}
+
+.priority span.active{
+  background:#6aa9ff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div>
+      <button class="new-btn" onclick="goBack()">Back</button>
+      <h2 id="equipmentTitle">Maintenance Requests - Equipment</h2>
+    </div>
+    <button class="new-btn" onclick="createNewRequest()">New Request</button>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>Subject</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Priority</th>
+          <th>Created Date</th>
+          <th>Technician</th>
+          <th>Completion Date</th>
+        </tr>
+      </thead>
+
+      <tbody id="maintenanceTable">
+        <!-- Maintenance requests will be populated here -->
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+// Sample maintenance data - in real app this would come from API
+const maintenanceRequests = {
+  'Samsung Monitor 15"': [
+    {
+      id: 'MR-001',
+      subject: 'Screen flickering issue',
+      type: 'Corrective',
+      status: 'New',
+      priority: 2,
+      createdDate: '2025-01-15',
+      technician: 'Mitchell Admin',
+      completionDate: '—'
+    },
+    {
+      id: 'MR-002',
+      subject: 'Regular cleaning',
+      type: 'Preventive',
+      status: 'Completed',
+      priority: 1,
+      createdDate: '2025-01-10',
+      technician: 'John Doe',
+      completionDate: '2025-01-12'
+    }
+  ],
+  'Acer Laptop': [
+    {
+      id: 'MR-003',
+      subject: 'Battery replacement',
+      type: 'Corrective',
+      status: 'In Progress',
+      priority: 3,
+      createdDate: '2025-01-14',
+      technician: 'Marc Demo',
+      completionDate: '—'
+    },
+    {
+      id: 'MR-004',
+      subject: 'Software update',
+      type: 'Preventive',
+      status: 'New',
+      priority: 1,
+      createdDate: '2025-01-16',
+      technician: 'Jane Smith',
+      completionDate: '—'
+    }
+  ]
+};
+
+function getStatusClass(status) {
+  switch(status.toLowerCase()) {
+    case 'new': return 'new';
+    case 'in progress': return 'progress';
+    case 'completed': return 'completed';
+    default: return 'new';
+  }
+}
+
+function renderPriority(level) {
+  let html = '';
+  for(let i = 1; i <= 3; i++) {
+    html += `<span${i <= level ? ' class="active"' : ''}></span>`;
+  }
+  return html;
+}
+
+function loadMaintenanceRequests() {
+  const equipmentName = localStorage.getItem('selectedEquipmentForMaintenance');
+  
+  if (equipmentName) {
+    document.getElementById('equipmentTitle').textContent = `Maintenance Requests - ${equipmentName}`;
+    
+    const requests = maintenanceRequests[equipmentName] || [];
+    const tableBody = document.getElementById('maintenanceTable');
+    
+    if (requests.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#666;">No maintenance requests found for this equipment</td></tr>';
+    } else {
+      tableBody.innerHTML = requests.map(request => `
+        <tr onclick="viewRequest('${request.id}')">
+          <td>${request.id}</td>
+          <td>${request.subject}</td>
+          <td>${request.type}</td>
+          <td><span class="status ${getStatusClass(request.status)}">${request.status}</span></td>
+          <td><div class="priority">${renderPriority(request.priority)}</div></td>
+          <td>${request.createdDate}</td>
+          <td>${request.technician}</td>
+          <td>${request.completionDate}</td>
+        </tr>
+      `).join('');
+    }
+  }
+}
+
+function viewRequest(requestId) {
+  alert(`Viewing maintenance request: ${requestId}`);
+}
+
+function createNewRequest() {
+  const equipmentName = localStorage.getItem('selectedEquipmentForMaintenance');
+  localStorage.setItem('selectedEquipment', equipmentName);
+  window.location.href = '../testactivity/index.html';
+}
+
+function goBack() {
+  window.location.href = 'equipment-detail.html';
+}
+
+window.addEventListener('load', loadMaintenanceRequests);
+</script>
+
+</body>
+</html>

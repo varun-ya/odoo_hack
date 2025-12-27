@@ -16,11 +16,11 @@ router.get('/', authenticate, getEquipment);
 // Get equipment by ID (all authenticated users)
 router.get('/:id', authenticate, getEquipmentById);
 
-// Create equipment (admin and managers only)
-router.post('/', authenticate, authorize(['admin', 'manager']), createEquipment);
+// Create equipment (all authenticated users)
+router.post('/', authenticate, createEquipment);
 
-// Update equipment (admin and managers only)
-router.put('/:id', authenticate, authorize(['admin', 'manager']), updateEquipment);
+// Update equipment (all authenticated users)
+router.put('/:id', authenticate, updateEquipment);
 
 // Scrap equipment workflow (admin and managers only)
 router.put('/:id/scrap', authenticate, authorize(['admin', 'manager']), scrapEquipment);

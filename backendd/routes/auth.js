@@ -9,7 +9,8 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    const user = await User.findOne({ email }).populate('team');
+    // Use case-insensitive email search
+    const user = await User.findOne({ email: email.toLowerCase() }).populate('team');
     if (!user) {
       return res.status(401).json({ error: 'Account does not exist' });
     }
@@ -41,8 +42,11 @@ router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
     
+    // Normalize email to lowercase for consistency
+    const normalizedEmail = email.toLowerCase();
+    
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return res.status(400).json({ error: 'Email already registered' });
     }
@@ -60,7 +64,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Password must contain uppercase, lowercase, and special character' });
     }
 
-    const user = new User({ name, email, password });
+    const user = new User({ name, email: normalizedEmail, password });
     await user.save();
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
@@ -87,7 +91,7 @@ router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
     
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res.status(404).json({ error: 'Account does not exist' });
     }

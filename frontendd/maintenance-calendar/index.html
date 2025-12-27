@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Maintenance Calendar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI", sans-serif;
+}
+
+body{
+  background:#0b0b0b;
+  color:#fff;
+  padding:20px;
+}
+
+/* ===== APP CONTAINER ===== */
+.app{
+  background:#121212;
+  border:1px solid #333;
+  border-radius:18px;
+  padding:20px;
+}
+
+/* ===== HEADER ===== */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.back-btn{
+  padding:8px 16px;
+  border-radius:10px;
+  border:1px solid #fff;
+  background:transparent;
+  color:#fff;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.back-btn:hover{
+  background:#fff;
+  color:#000;
+}
+
+.header h2{
+  font-size:18px;
+  color:#fff;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+}
+
+.controls button{
+  padding:8px 16px;
+  border:1px solid #444;
+  background:#1a1a1a;
+  color:#fff;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.controls button:hover{
+  background:#333;
+}
+
+/* ===== MAIN LAYOUT ===== */
+.layout{
+  display:grid;
+  grid-template-columns:3fr 1fr;
+  gap:20px;
+}
+
+/* ===== WEEK CALENDAR ===== */
+.calendar{
+  border:1px solid #333;
+  border-radius:12px;
+  overflow:hidden;
+  background:#1a1a1a;
+}
+
+.days{
+  display:grid;
+  grid-template-columns:60px repeat(7,1fr);
+  background:#222;
+  border-bottom:1px solid #333;
+}
+
+.days div{
+  padding:12px 8px;
+  font-size:12px;
+  text-align:center;
+  border-right:1px solid #333;
+  color:#bdbdbd;
+}
+
+.days div:last-child{
+  border-right:none;
+}
+
+.body{
+  display:grid;
+  grid-template-columns:60px repeat(7,1fr);
+  height:540px;
+}
+
+.time-col{
+  border-right:1px solid #333;
+  background:#1a1a1a;
+}
+
+.time{
+  height:45px;
+  font-size:11px;
+  text-align:right;
+  padding:4px 8px;
+  color:#777;
+  border-bottom:1px solid #333;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+}
+
+.day-col{
+  position:relative;
+  border-right:1px solid #333;
+  background:#1a1a1a;
+}
+
+.day-col:last-child{
+  border-right:none;
+}
+
+.day-col:hover{
+  background:#222;
+}
+
+.day-col::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 44px,
+    #333 44px,
+    #333 45px
+  );
+  pointer-events:none;
+}
+
+/* ===== EVENT ===== */
+.event{
+  position:absolute;
+  left:6px;
+  right:6px;
+  background:#2d1b1b;
+  border-left:4px solid #ff4d4d;
+  border-radius:6px;
+  padding:8px;
+  font-size:12px;
+  cursor:pointer;
+  color:#fff;
+}
+
+.event:hover{
+  background:#3d2b2b;
+}
+
+.event strong{
+  display:block;
+  color:#ff6b6b;
+}
+
+/* ===== MINI CALENDAR ===== */
+.mini{
+  border:1px solid #333;
+  border-radius:12px;
+  padding:16px;
+  background:#1a1a1a;
+}
+
+.mini h3{
+  font-size:16px;
+  text-align:center;
+  margin-bottom:12px;
+  color:#fff;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+  font-size:12px;
+}
+
+.cell{
+  text-align:center;
+  padding:8px 4px;
+  border-radius:6px;
+  cursor:pointer;
+  color:#bdbdbd;
+}
+
+.cell:hover{
+  background:#333;
+}
+
+.cell.active{
+  background:#ff4d4d;
+  color:#fff;
+}
+
+.cell.header{
+  font-weight:bold;
+  color:#fff;
+  cursor:default;
+}
+
+.cell.header:hover{
+  background:transparent;
+}
+
+/* ===== THEME TOGGLE ===== */
+.theme-toggle{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 12px;
+  border:1px solid #444;
+  background:#1a1a1a;
+  color:#fff;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
+  margin-left:10px;
+}
+
+.theme-toggle:hover{
+  background:#333;
+}
+
+.theme-toggle svg{
+  transition:transform 0.3s ease;
+}
+
+/* ===== LIGHT MODE ===== */
+body.light{
+  background:#f5f5f5;
+  color:#333;
+}
+
+body.light .app{
+  background:#fff;
+  border-color:#ddd;
+}
+
+body.light .back-btn{
+  border-color:#333;
+  color:#333;
+}
+
+body.light .back-btn:hover{
+  background:#333;
+  color:#fff;
+}
+
+body.light .header h2{
+  color:#333;
+}
+
+body.light .controls button,
+body.light .theme-toggle{
+  border-color:#ddd;
+  background:#f8f8f8;
+  color:#333;
+}
+
+body.light .controls button:hover,
+body.light .theme-toggle:hover{
+  background:#e8e8e8;
+}
+
+body.light .calendar{
+  border-color:#ddd;
+  background:#fff;
+}
+
+body.light .days{
+  background:#f8f8f8;
+  border-bottom-color:#ddd;
+}
+
+body.light .days div{
+  border-right-color:#ddd;
+  color:#666;
+}
+
+body.light .time-col{
+  border-right-color:#ddd;
+  background:#fff;
+}
+
+body.light .time{
+  color:#999;
+  border-bottom-color:#ddd;
+}
+
+body.light .day-col{
+  border-right-color:#ddd;
+  background:#fff;
+}
+
+body.light .day-col:hover{
+  background:#f8f8f8;
+}
+
+body.light .day-col::before{
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 44px,
+    #ddd 44px,
+    #ddd 45px
+  );
+}
+
+body.light .event{
+  background:#ffe6e6;
+  border-left-color:#ff4d4d;
+  color:#333;
+}
+
+body.light .event:hover{
+  background:#ffd6d6;
+}
+
+body.light .event strong{
+  color:#d63031;
+}
+
+body.light .mini{
+  border-color:#ddd;
+  background:#fff;
+}
+
+body.light .mini h3{
+  color:#333;
+}
+
+body.light .cell{
+  color:#666;
+}
+
+body.light .cell:hover{
+  background:#f0f0f0;
+}
+
+body.light .cell.header{
+  color:#333;
+}
+
+body.light .cell.active{
+  background:#ff4d4d;
+  color:#fff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="goBack()">Back</button>
+      <h2>Maintenance Calendar</h2>
+    </div>
+    <div class="controls">
+      <button onclick="prevWeek()">◀ Previous</button>
+      <button onclick="today()">Today</button>
+      <button onclick="nextWeek()">Next ▶</button>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path id="themeIcon" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <span id="themeText">Dark</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- WEEK VIEW -->
+    <div class="calendar">
+
+      <div class="days">
+        <div></div>
+        <div id="day0">Sun<br><span id="date0">14</span></div>
+        <div id="day1">Mon<br><span id="date1">15</span></div>
+        <div id="day2">Tue<br><span id="date2">16</span></div>
+        <div id="day3">Wed<br><span id="date3">17</span></div>
+        <div id="day4">Thu<br><span id="date4">18</span></div>
+        <div id="day5">Fri<br><span id="date5">19</span></div>
+        <div id="day6">Sat<br><span id="date6">20</span></div>
+      </div>
+
+      <div class="body">
+
+        <!-- TIME COLUMN -->
+        <div class="time-col">
+          <div class="time">08:00</div>
+          <div class="time">09:00</div>
+          <div class="time">10:00</div>
+          <div class="time">11:00</div>
+          <div class="time">12:00</div>
+          <div class="time">13:00</div>
+          <div class="time">14:00</div>
+          <div class="time">15:00</div>
+          <div class="time">16:00</div>
+          <div class="time">17:00</div>
+          <div class="time">18:00</div>
+          <div class="time">19:00</div>
+        </div>
+
+        <!-- DAYS -->
+        <div class="day-col" onclick="addEvent(0)" id="dayCol0"></div>
+        <div class="day-col" onclick="addEvent(1)" id="dayCol1"></div>
+        <div class="day-col" onclick="addEvent(2)" id="dayCol2"></div>
+        <div class="day-col" onclick="addEvent(3)" id="dayCol3"></div>
+        <div class="day-col" onclick="addEvent(4)" id="dayCol4"></div>
+        <div class="day-col" onclick="addEvent(5)" id="dayCol5"></div>
+        <div class="day-col" onclick="addEvent(6)" id="dayCol6"></div>
+
+      </div>
+    </div>
+
+    <!-- MINI CALENDAR -->
+    <div class="mini">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <button onclick="prevMonth()" style="background:none;border:none;color:inherit;cursor:pointer;font-size:16px;">‹</button>
+        <h3 id="monthYear">December 2025</h3>
+        <button onclick="nextMonth()" style="background:none;border:none;color:inherit;cursor:pointer;font-size:16px;">›</button>
+      </div>
+      <div class="grid" id="miniCalendarGrid">
+        <div class="cell header">S</div>
+        <div class="cell header">M</div>
+        <div class="cell header">T</div>
+        <div class="cell header">W</div>
+        <div class="cell header">T</div>
+        <div class="cell header">F</div>
+        <div class="cell header">S</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let currentWeek = new Date();
+
+function goBack() {
+  window.location.href = '../index.html';
+}
+
+function openRequest(e) {
+  e.stopPropagation();
+  window.location.href = '../testactivity/index.html';
+}
+
+function addEvent(dayIndex) {
+  const startOfWeek = new Date(currentWeek);
+  startOfWeek.setDate(currentWeek.getDate() - currentWeek.getDay());
+  const selectedDate = new Date(startOfWeek);
+  selectedDate.setDate(startOfWeek.getDate() + dayIndex);
+  
+  const dateStr = selectedDate.toISOString().split('T')[0];
+  window.location.href = `../index.html?date=${dateStr}`;
+}
+
+function prevWeek() {
+  currentWeek.setDate(currentWeek.getDate() - 7);
+  updateWeekView();
+}
+
+function nextWeek() {
+  currentWeek.setDate(currentWeek.getDate() + 7);
+  updateWeekView();
+}
+
+function today() {
+  currentWeek = new Date();
+  updateWeekView();
+}
+
+function updateWeekView() {
+  const startOfWeek = new Date(currentWeek);
+  startOfWeek.setDate(currentWeek.getDate() - currentWeek.getDay());
+  
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(startOfWeek);
+    date.setDate(startOfWeek.getDate() + i);
+    document.getElementById(`date${i}`).textContent = date.getDate();
+  }
+  
+  updateMiniCalendar();
+  loadCalendarEvents();
+}
+
+let miniCalendarDate = new Date();
+
+function updateMiniCalendar() {
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'];
+  document.getElementById('monthYear').textContent = 
+    `${monthNames[miniCalendarDate.getMonth()]} ${miniCalendarDate.getFullYear()}`;
+  
+  const grid = document.getElementById('miniCalendarGrid');
+  const headers = grid.querySelectorAll('.header');
+  grid.innerHTML = '';
+  headers.forEach(header => grid.appendChild(header));
+  
+  const firstDay = new Date(miniCalendarDate.getFullYear(), miniCalendarDate.getMonth(), 1);
+  const lastDay = new Date(miniCalendarDate.getFullYear(), miniCalendarDate.getMonth() + 1, 0);
+  const startDate = firstDay.getDay();
+  const daysInMonth = lastDay.getDate();
+  
+  // Add empty cells for days before month starts
+  for (let i = 0; i < startDate; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    grid.appendChild(cell);
+  }
+  
+  // Add days of month
+  const today = new Date();
+  for (let day = 1; day <= daysInMonth; day++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.textContent = day;
+    
+    const cellDate = new Date(miniCalendarDate.getFullYear(), miniCalendarDate.getMonth(), day);
+    if (cellDate.toDateString() === today.toDateString()) {
+      cell.classList.add('active');
+    }
+    
+    cell.onclick = () => {
+      currentWeek = new Date(cellDate);
+      updateWeekView();
+    };
+    
+    grid.appendChild(cell);
+  }
+}
+
+function prevMonth() {
+  miniCalendarDate.setMonth(miniCalendarDate.getMonth() - 1);
+  updateMiniCalendar();
+}
+
+function nextMonth() {
+  miniCalendarDate.setMonth(miniCalendarDate.getMonth() + 1);
+  updateMiniCalendar();
+}
+
+// Initialize calendar
+window.addEventListener('load', function() {
+  updateWeekView();
+  loadTheme();
+  loadCalendarEvents();
+});
+
+function loadCalendarEvents() {
+  const events = JSON.parse(localStorage.getItem('calendarEvents')) || [];
+  
+  // Clear existing events
+  for (let i = 0; i < 7; i++) {
+    const dayCol = document.getElementById(`dayCol${i}`);
+    dayCol.innerHTML = '';
+  }
+  
+  // Get current week dates
+  const startOfWeek = new Date(currentWeek);
+  startOfWeek.setDate(currentWeek.getDate() - currentWeek.getDay());
+  
+  events.forEach(event => {
+    const eventDate = new Date(event.date);
+    const dayIndex = eventDate.getDay();
+    
+    // Check if event is in current week
+    const weekStart = new Date(startOfWeek);
+    const weekEnd = new Date(startOfWeek);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    
+    if (eventDate >= weekStart && eventDate <= weekEnd) {
+      const dayCol = document.getElementById(`dayCol${dayIndex}`);
+      
+      // Calculate position based on time
+      const timeParts = event.time.split(':');
+      const hour = parseInt(timeParts[0]);
+      const minute = parseInt(timeParts[1]);
+      const topPosition = ((hour - 8) * 45) + (minute * 45 / 60);
+      
+      // Calculate height based on duration
+      const duration = parseFloat(event.duration) || 1;
+      const height = duration * 45;
+      
+      const eventDiv = document.createElement('div');
+      eventDiv.className = 'event';
+      eventDiv.style.top = `${topPosition}px`;
+      eventDiv.style.height = `${height}px`;
+      eventDiv.onclick = function(e) {
+        e.stopPropagation();
+        localStorage.setItem('currentRequestId', event.id);
+        window.location.href = '../testactivity/index.html';
+      };
+      
+      const endTime = new Date(`2000-01-01 ${event.time}`);
+      endTime.setHours(endTime.getHours() + Math.floor(duration));
+      endTime.setMinutes(endTime.getMinutes() + ((duration % 1) * 60));
+      
+      eventDiv.innerHTML = `
+        <strong>${event.title}</strong>
+        ${event.equipment}<br>
+        ${event.time} – ${endTime.toTimeString().slice(0, 5)}
+      `;
+      
+      dayCol.appendChild(eventDiv);
+    }
+  });
+}
+
+function toggleTheme() {
+  const body = document.body;
+  const themeIcon = document.getElementById('themeIcon');
+  const themeText = document.getElementById('themeText');
+  
+  if (body.classList.contains('light')) {
+    body.classList.remove('light');
+    themeIcon.setAttribute('d', 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z');
+    themeText.textContent = 'Dark';
+    localStorage.setItem('theme', 'dark');
+  } else {
+    body.classList.add('light');
+    themeIcon.setAttribute('d', 'M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z');
+    themeText.textContent = 'Light';
+    localStorage.setItem('theme', 'light');
+  }
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  const body = document.body;
+  const themeIcon = document.getElementById('themeIcon');
+  const themeText = document.getElementById('themeText');
+  
+  if (savedTheme === 'light') {
+    body.classList.add('light');
+    themeIcon.setAttribute('d', 'M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z');
+    themeText.textContent = 'Light';
+  } else {
+    themeIcon.setAttribute('d', 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z');
+    themeText.textContent = 'Dark';
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Maintenance Request Worksheet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+/* ===== RESET ===== */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI", sans-serif;
+}
+
+body{
+  background:#0b0b0b;
+  color:#ffffff;
+  padding:20px;
+}
+
+/* ===== MAIN WRAPPER ===== */
+.wrapper{
+  border:1px dashed #555;
+  border-radius:18px;
+  padding:22px;
+}
+
+/* ===== HEADER ===== */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+  padding:20px;
+  gap:15px;
+}
+
+.stage-container{
+  border:1px dashed #666;
+  border-radius:14px;
+  padding:6px 14px;
+  font-size:13px;
+  color:#cfcfcf;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:#0b0b0b;
+}
+
+.worksheet-btn{
+  border:1px solid #ffffff;
+  background:transparent;
+  color:#ffffff;
+  padding:8px 18px;
+  border-radius:10px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.worksheet-btn:hover{
+  background:#ffffff;
+  color:#000;
+}
+
+/* ===== STAGES ===== */
+.stages{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  margin-bottom:24px;
+}
+
+/* ===== STATUS CIRCLE SELECTOR ===== */
+.status-selector{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:12px;
+  color:#cfcfcf;
+}
+
+.status-toggle{
+  cursor:pointer;
+  padding:8px;
+  border-radius:50%;
+  border:1px dashed #666;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.status-dropdown{
+  position:absolute;
+  top:40px;
+  right:0;
+  background:#0b0b0b;
+  border:1px solid #666;
+  border-radius:8px;
+  padding:8px;
+  min-width:180px;
+  z-index:1000;
+}
+
+.status-option{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  padding:4px 8px;
+  border-radius:4px;
+}
+
+.status-option:hover{
+  background:#222;
+}
+
+.status-circle{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  border:2px solid #aaa;
+}
+
+.status-circle.in-progress{
+  border-color:#9e9e9e;
+}
+
+.status-circle.blocked{
+  border-color:#e74c3c;
+}
+
+.status-circle.ready{
+  border-color:#2ecc71;
+}
+
+.status-circle.active{
+  background:currentColor;
+}
+
+.status-circle.in-progress.active{
+  background:#9e9e9e;
+}
+
+.status-circle.blocked.active{
+  background:#e74c3c;
+}
+
+.status-circle.ready.active{
+  background:#2ecc71;
+}
+
+/* ===== CONTENT GRID ===== */
+.content{
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:40px;
+}
+
+/* ===== FIELD ===== */
+.field{
+  margin-bottom:14px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  color:#bdbdbd;
+  margin-bottom:4px;
+}
+
+.value{
+  border-bottom:1px solid #333;
+  padding-bottom:6px;
+  font-size:14px;
+}
+
+/* ===== RADIO ===== */
+.radio{
+  display:flex;
+  gap:20px;
+  font-size:14px;
+}
+
+/* ===== PRIORITY ===== */
+.priority{
+  display:flex;
+  gap:8px;
+}
+
+.priority span{
+  width:20px;
+  height:20px;
+  border:1px solid #777;
+  border-radius:4px;
+}
+
+.priority span.filled{
+  background:#6aa9ff;
+  border-color:#6aa9ff;
+}
+
+/* ===== RIGHT COLUMN ===== */
+.right{
+  border-left:1px dashed #333;
+  padding-left:30px;
+}
+
+/* ===== BOTTOM SECTION ===== */
+.worksheet-bottom{
+  margin-top:26px;
+  border:1px dashed #555;
+  border-radius:18px;
+  min-height:240px;
+  position:relative;
+  padding:44px 22px 22px;
+}
+
+.worksheet-tabs{
+  position:absolute;
+  top:-14px;
+  left:20px;
+  display:flex;
+  gap:8px;
+  background:#0b0b0b;
+  padding:0 6px;
+}
+
+.tab{
+  border:1px solid #666;
+  background:transparent;
+  color:#cfcfcf;
+  padding:4px 14px;
+  border-radius:8px;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.tab.active{
+  border-color:#ffffff;
+  color:#ffffff;
+}
+
+.worksheet-content{
+  font-size:13px;
+  color:#9a9a9a;
+}
+
+.worksheet-content textarea {
+  width: 100%;
+  background: #111;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 12px;
+  border-radius: 8px;
+  outline: none;
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* ===== SELECT STYLES ===== */
+.select-field{
+  width:100%;
+  background:#111;
+  color:#fff;
+  border:1px solid #444;
+  padding:8px 10px;
+  border-radius:8px;
+  outline:none;
+}
+
+.hidden {
+  display:none;
+}
+
+/* ===== TEAM LINK ===== */
+.team-link{
+  color:#6aa9ff;
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+.team-link:hover{
+  color:#ffffff;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #0b0b0b;
+  border: 1px solid #333;
+  border-radius: 12px;
+  width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.form-field {
+  margin-bottom: 16px;
+}
+
+.form-field label {
+  display: block;
+  font-size: 13px;
+  color: #bdbdbd;
+  margin-bottom: 6px;
+}
+
+.form-field input, .form-field select, .form-field textarea {
+  width: 100%;
+  background: #111;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 8px 10px;
+  border-radius: 6px;
+  outline: none;
+}
+
+/* Calendar icon styling */
+.form-field input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.form-field input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.form-field textarea {
+  height: 80px;
+  resize: vertical;
+}
+
+.save-btn {
+  background: #6aa9ff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.save-btn:hover {
+  background: #5a99ef;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="display:flex;gap:8px;">
+    <button class="worksheet-btn" onclick="goBack()">Back</button>
+    <button class="worksheet-btn" onclick="createNewRequest()">New</button>
+  </div>
+  <button class="worksheet-btn" onclick="openWorksheet()">✎ Worksheet</button>
+  <div class="stage-container">
+    <span>New Request</span>
+    <span>&gt;</span>
+    <span>In Progress</span>
+    <span>&gt;</span>
+    <span>Repaired</span>
+    <span>&gt;</span>
+    <span>Scrap</span>
+  </div>
+</div>
+
+<div class="wrapper">
+
+  <!-- STAGES -->
+  <div class="stages">
+    <div class="status-selector">
+      <div class="status-toggle" onclick="toggleStatusDropdown()">
+        <span class="status-circle active in-progress" id="currentStatusCircle"></span>
+      </div>
+      
+      <div class="status-dropdown hidden" id="statusDropdown">
+        <div class="status-option" onclick="selectStatus('in-progress')">
+          <span class="status-circle in-progress"></span>
+          <span>In Progress</span>
+        </div>
+
+        <div class="status-option" onclick="selectStatus('blocked')">
+          <span class="status-circle blocked"></span>
+          <span>Blocked</span>
+        </div>
+
+        <div class="status-option" onclick="selectStatus('ready')">
+          <span class="status-circle ready"></span>
+          <span>Ready for next stage</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- LEFT -->
+    <div>
+      <div class="field">
+        <label>Subject</label>
+        <div class="value" id="subjectValue">Test activity</div>
+      </div>
+
+      <div class="field">
+        <label>Created By</label>
+        <div class="value">Mitchell Admin</div>
+      </div>
+
+      <div class="field">
+        <label>Maintenance For</label>
+        <select id="maintenanceFor" class="select-field" title="Select maintenance type">
+          <option value="equipment">Equipment</option>
+          <option value="workcenter">Work Center</option>
+        </select>
+      </div>
+
+      <div class="field" id="equipmentField">
+        <label>Equipment</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <select id="equipmentSelect" class="select-field" title="Select equipment" style="flex: 1;">
+            <option>Samsung Monitor 15"</option>
+            <option>Acer Laptop</option>
+          </select>
+          <button class="worksheet-btn" onclick="window.location.href='../equipment/index.html'" style="padding: 8px 12px; font-size: 12px;">View All</button>
+        </div>
+      </div>
+
+      <div class="field hidden" id="workCenterField">
+        <label>Work Center</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <select id="workCenterSelect" class="select-field" title="Select work center" style="flex: 1;">
+            <option>Drill 1</option>
+            <option>Lathe Machine</option>
+          </select>
+          <button class="worksheet-btn" onclick="window.location.href='../workcenter/index.html'" style="padding: 8px 12px; font-size: 12px;">View All</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Category</label>
+        <div class="value" id="categoryValue">Computers</div>
+      </div>
+
+      <div class="field">
+        <label>Request Date</label>
+        <div class="value">12 / 18 / 2025</div>
+      </div>
+
+      <div class="field">
+        <label>Maintenance Type</label>
+        <div class="radio" id="maintenanceTypeDisplay">
+          <span>● Corrective</span>
+          <span>○ Preventive</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+      <div class="field">
+        <label>Team</label>
+        <div class="value team-link" onclick="openTeams()" id="teamValue">Internal Maintenance</div>
+      </div>
+
+      <div class="field">
+        <label>Technician</label>
+        <div class="value" id="technicianValue">Aka Foster</div>
+      </div>
+
+      <div class="field">
+        <label>Scheduled Date</label>
+        <div class="value">12 / 28 / 2025 14:30</div>
+      </div>
+
+      <div class="field">
+        <label>Duration</label>
+        <div class="value">00:00 hours</div>
+      </div>
+
+      <div class="field">
+        <label>Priority</label>
+        <div class="priority" id="priorityDisplay">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Company</label>
+        <div class="value">My Company (San Francisco)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NOTES / INSTRUCTIONS -->
+  <div class="worksheet-bottom">
+    <div class="worksheet-tabs">
+      <button class="tab active">Notes</button>
+      <button class="tab">Instructions</button>
+    </div>
+
+    <div class="worksheet-content" id="notesContent">
+      <textarea id="worksheetNotes" placeholder="Add your worksheet notes, observations, or comments here..."></textarea>
+    </div>
+  </div>
+
+</div>
+
+<!-- NEW REQUEST MODAL -->
+<div id="newRequestModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>New Maintenance Request</h3>
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    
+    <div class="form-grid">
+      <div>
+        <div class="form-field">
+          <label>Subject</label>
+          <input type="text" id="subject" placeholder="Enter subject">
+        </div>
+        
+        <div class="form-field">
+          <label>Maintenance For</label>
+          <select id="modalMaintenanceFor">
+            <option value="equipment">Equipment</option>
+            <option value="workcenter">Work Center</option>
+          </select>
+        </div>
+        
+        <div class="form-field" id="modalEquipmentField">
+          <label>Equipment</label>
+          <select id="modalEquipmentSelect">
+            <option>Samsung Monitor 15"</option>
+            <option>Acer Laptop</option>
+          </select>
+        </div>
+        
+        <div class="form-field hidden" id="modalWorkCenterField">
+          <label>Work Center</label>
+          <select id="modalWorkCenterSelect">
+            <option>Drill 1</option>
+            <option>Lathe Machine</option>
+          </select>
+        </div>
+        
+        <div class="form-field">
+          <label>Category</label>
+          <input type="text" id="category" placeholder="Enter category">
+        </div>
+        
+        <div class="form-field">
+          <label>Maintenance Type</label>
+          <div style="display: flex; gap: 20px; font-size: 14px; margin-top: 8px;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="radio" name="maintenanceType" value="corrective" checked style="margin: 0;">
+              <span>Corrective</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="radio" name="maintenanceType" value="preventive" style="margin: 0;">
+              <span>Preventive</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <div class="form-field">
+          <label>Team</label>
+          <select id="team">
+            <option>Internal Maintenance</option>
+            <option>External Support</option>
+          </select>
+        </div>
+        
+        <div class="form-field">
+          <label>Technician</label>
+          <input type="text" id="technician" placeholder="Enter technician name">
+        </div>
+        
+        <div class="form-field">
+          <label>Priority</label>
+          <select id="priority">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        
+        <div class="form-field">
+          <label>Scheduled Date</label>
+          <input type="datetime-local" id="scheduledDate">
+        </div>
+        
+        <div class="form-field">
+          <label>Duration (hours)</label>
+          <input type="number" id="duration" placeholder="Enter duration" min="0" step="0.5">
+        </div>
+        
+        <div class="form-field">
+          <label>Notes</label>
+          <textarea id="notes" placeholder="Add notes or instructions..."></textarea>
+        </div>
+      </div>
+    </div>
+    
+    <button class="save-btn" onclick="saveRequest()">Save Request</button>
+  </div>
+</div>
+
+<script>
+const maintenanceFor = document.getElementById("maintenanceFor");
+const equipmentField = document.getElementById("equipmentField");
+const workCenterField = document.getElementById("workCenterField");
+
+maintenanceFor.addEventListener("change", function () {
+  if (this.value === "workcenter") {
+    equipmentField.classList.add("hidden");
+    workCenterField.classList.remove("hidden");
+  } else {
+    workCenterField.classList.add("hidden");
+    equipmentField.classList.remove("hidden");
+  }
+});
+
+function loadEquipmentList() {
+  const equipmentList = JSON.parse(localStorage.getItem('equipmentList')) || [
+    'Samsung Monitor 15"',
+    'Acer Laptop'
+  ];
+  
+  const equipmentSelect = document.getElementById('equipmentSelect');
+  equipmentSelect.innerHTML = '';
+  
+  equipmentList.forEach(equipment => {
+    const option = document.createElement('option');
+    option.textContent = equipment;
+    equipmentSelect.appendChild(option);
+  });
+}
+
+window.addEventListener('load', function() {
+  loadEquipmentList();
+  loadRequestData();
+  
+  const selectedWorkCenter = localStorage.getItem('selectedWorkCenter');
+  const selectedEquipment = localStorage.getItem('selectedEquipment');
+  
+  if (selectedWorkCenter) {
+    document.getElementById('maintenanceFor').value = 'workcenter';
+    equipmentField.classList.add('hidden');
+    workCenterField.classList.remove('hidden');
+    document.getElementById('workCenterSelect').innerHTML = `<option>${selectedWorkCenter}</option>`;
+    localStorage.removeItem('selectedWorkCenter');
+  }
+  
+  if (selectedEquipment) {
+    document.getElementById('maintenanceFor').value = 'equipment';
+    workCenterField.classList.add('hidden');
+    equipmentField.classList.remove('hidden');
+    equipmentField.querySelector('select').innerHTML = `<option>${selectedEquipment}</option>`;
+    localStorage.removeItem('selectedEquipment');
+  }
+});
+
+function loadRequestData() {
+  const requestId = localStorage.getItem('currentRequestId');
+  if (!requestId) return;
+  
+  if (requestId === 'default') {
+    return;
+  }
+  
+  const requests = JSON.parse(localStorage.getItem('maintenanceRequests')) || [];
+  const request = requests.find(r => r.id == requestId);
+  
+  if (request) {
+    document.getElementById('subjectValue').textContent = request.subject;
+    document.getElementById('categoryValue').textContent = request.category;
+    document.getElementById('teamValue').textContent = request.team;
+    document.getElementById('technicianValue').textContent = request.technician;
+    document.getElementById('maintenanceFor').value = request.maintenanceFor;
+    
+    if (request.maintenanceFor === 'workcenter') {
+      equipmentField.classList.add('hidden');
+      workCenterField.classList.remove('hidden');
+      document.getElementById('workCenterSelect').innerHTML = `<option>${request.workCenter}</option>`;
+    } else {
+      workCenterField.classList.add('hidden');
+      equipmentField.classList.remove('hidden');
+      document.getElementById('equipmentSelect').innerHTML = `<option>${request.equipment}</option>`;
+    }
+    
+    if (request.notes) {
+      document.getElementById('notesContent').textContent = request.notes;
+    }
+    
+    if (request.maintenanceType) {
+      const maintenanceTypeDisplay = document.getElementById('maintenanceTypeDisplay');
+      if (request.maintenanceType === 'preventive') {
+        maintenanceTypeDisplay.innerHTML = '<span>○ Corrective</span><span>● Preventive</span>';
+      } else {
+        maintenanceTypeDisplay.innerHTML = '<span>● Corrective</span><span>○ Preventive</span>';
+      }
+    }
+    
+    if (request.priority) {
+      updatePriorityDisplay(request.priority);
+    }
+  }
+  
+  localStorage.removeItem('currentRequestId');
+}
+
+function updatePriorityDisplay(priority) {
+  const priorityDisplay = document.getElementById('priorityDisplay');
+  const boxes = priorityDisplay.querySelectorAll('span');
+  
+  boxes.forEach(box => box.classList.remove('filled'));
+  
+  if (priority === 'low') {
+    boxes[0].classList.add('filled');
+  } else if (priority === 'medium') {
+    boxes[0].classList.add('filled');
+    boxes[1].classList.add('filled');
+  } else if (priority === 'high') {
+    boxes[0].classList.add('filled');
+    boxes[1].classList.add('filled');
+    boxes[2].classList.add('filled');
+  }
+}
+
+function selectStatus(status) {
+  const currentCircle = document.getElementById('currentStatusCircle');
+  currentCircle.className = `status-circle active ${status}`;
+  document.getElementById('statusDropdown').classList.add('hidden');
+}
+
+function toggleStatusDropdown() {
+  const dropdown = document.getElementById('statusDropdown');
+  dropdown.classList.toggle('hidden');
+}
+
+document.addEventListener('click', function(event) {
+  const selector = document.querySelector('.status-selector');
+  if (!selector.contains(event.target)) {
+    document.getElementById('statusDropdown').classList.add('hidden');
+  }
+});
+
+function openWorksheet() {
+  const worksheetSection = document.querySelector('.worksheet-bottom');
+  const worksheetTextarea = document.getElementById('worksheetNotes');
+  
+  worksheetSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  
+  setTimeout(() => {
+    worksheetTextarea.focus();
+  }, 500);
+}
+
+function goBack() {
+  window.location.href = '../index.html';
+}
+
+function openTeams() {
+  window.location.href = 'teams.html';
+}
+
+function createNewRequest() {
+  document.getElementById('newRequestModal').style.display = 'flex';
+  loadModalEquipment();
+}
+
+function closeModal() {
+  document.getElementById('newRequestModal').style.display = 'none';
+  clearForm();
+}
+
+function loadModalEquipment() {
+  const equipmentList = JSON.parse(localStorage.getItem('equipmentList')) || [
+    'Samsung Monitor 15"',
+    'Acer Laptop'
+  ];
+  
+  const equipmentSelect = document.getElementById('modalEquipmentSelect');
+  equipmentSelect.innerHTML = '';
+  
+  equipmentList.forEach(equipment => {
+    const option = document.createElement('option');
+    option.textContent = equipment;
+    equipmentSelect.appendChild(option);
+  });
+}
+
+function clearForm() {
+  document.getElementById('subject').value = '';
+  document.getElementById('category').value = '';
+  document.getElementById('technician').value = '';
+  document.getElementById('notes').value = '';
+  document.getElementById('scheduledDate').value = '';
+  document.getElementById('duration').value = '';
+  document.getElementById('modalMaintenanceFor').value = 'equipment';
+  document.getElementById('modalEquipmentField').classList.remove('hidden');
+  document.getElementById('modalWorkCenterField').classList.add('hidden');
+  document.querySelector('input[name="maintenanceType"][value="corrective"]').checked = true;
+}
+
+function saveRequest() {
+  const subject = document.getElementById('subject').value;
+  const technician = document.getElementById('technician').value;
+  const category = document.getElementById('category').value;
+  const team = document.getElementById('team').value;
+  const priority = document.getElementById('priority').value;
+  const notes = document.getElementById('notes').value;
+  const scheduledDate = document.getElementById('scheduledDate').value;
+  const duration = document.getElementById('duration').value;
+  const maintenanceFor = document.getElementById('modalMaintenanceFor').value;
+  const equipment = document.getElementById('modalEquipmentSelect').value;
+  const workCenter = document.getElementById('modalWorkCenterSelect').value;
+  const maintenanceType = document.querySelector('input[name="maintenanceType"]:checked').value;
+  
+  if (!subject.trim()) {
+    alert('Please enter a subject');
+    return;
+  }
+  
+  const requestData = {
+    id: Date.now(),
+    subject: subject,
+    technician: technician || 'Unassigned',
+    category: category || 'General',
+    team: team,
+    priority: priority,
+    notes: notes,
+    scheduledDate: scheduledDate,
+    duration: duration || '0',
+    maintenanceFor: maintenanceFor,
+    equipment: equipment,
+    workCenter: workCenter,
+    maintenanceType: maintenanceType,
+    createdBy: 'Mitchell Admin',
+    requestDate: new Date().toLocaleDateString(),
+    status: 'New Request'
+  };
+  
+  let requests = JSON.parse(localStorage.getItem('maintenanceRequests')) || [];
+  requests.push(requestData);
+  localStorage.setItem('maintenanceRequests', JSON.stringify(requests));
+  
+  let calendarEvents = JSON.parse(localStorage.getItem('calendarEvents')) || [];
+  if (scheduledDate) {
+    const eventDate = new Date(scheduledDate);
+    calendarEvents.push({
+      id: requestData.id,
+      title: subject,
+      date: eventDate.toISOString().split('T')[0],
+      time: eventDate.toTimeString().slice(0, 5),
+      duration: duration || '1',
+      technician: technician || 'Unassigned',
+      equipment: equipment || workCenter,
+      type: maintenanceType
+    });
+    localStorage.setItem('calendarEvents', JSON.stringify(calendarEvents));
+  }
+  
+  closeModal();
+  alert('Maintenance request created successfully!');
+}
+
+// Modal maintenance type toggle
+document.addEventListener('DOMContentLoaded', function() {
+  const modalMaintenanceFor = document.getElementById('modalMaintenanceFor');
+  if (modalMaintenanceFor) {
+    modalMaintenanceFor.addEventListener('change', function() {
+      const equipmentField = document.getElementById('modalEquipmentField');
+      const workCenterField = document.getElementById('modalWorkCenterField');
+      
+      if (this.value === 'workcenter') {
+        equipmentField.classList.add('hidden');
+        workCenterField.classList.remove('hidden');
+      } else {
+        workCenterField.classList.add('hidden');
+        equipmentField.classList.remove('hidden');
+      }
+    });
+  }
+});
+</script>
+
+</body>
+</html>

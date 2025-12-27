@@ -28,6 +28,7 @@ const createTeam = async (req, res) => {
   try {
     const team = new Team(req.body);
     await team.save();
+    await team.populate('members', 'name email');
     res.status(201).json(team);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -37,7 +38,8 @@ const createTeam = async (req, res) => {
 // Update team
 const updateTeam = async (req, res) => {
   try {
-    const team = await Team.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const team = await Team.findByIdAndUpdate(req.params.id, req.body, { new: true })
+      .populate('members', 'name email');
     if (!team) {
       return res.status(404).json({ error: 'Team not found' });
     }

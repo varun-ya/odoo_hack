@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kanban Board</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #0b0b0b;
+  color: #fff;
+  padding: 20px;
+}
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.kanban-column {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 500px;
+}
+
+.column-header {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding: 8px 0;
+  border-bottom: 2px solid;
+}
+
+.new-column .column-header { border-color: #3b82f6; color: #3b82f6; }
+.progress-column .column-header { border-color: #f59e0b; color: #f59e0b; }
+.repaired-column .column-header { border-color: #10b981; color: #10b981; }
+.scrap-column .column-header { border-color: #ef4444; color: #ef4444; }
+
+.kanban-card {
+  background: #2a2a2a;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  cursor: grab;
+  border-left: 4px solid;
+  transition: transform 0.2s;
+}
+
+.kanban-card:hover {
+  transform: translateY(-2px);
+}
+
+.kanban-card.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.new-column .kanban-card { border-color: #3b82f6; }
+.progress-column .kanban-card { border-color: #f59e0b; }
+.repaired-column .kanban-card { border-color: #10b981; }
+.scrap-column .kanban-card { border-color: #ef4444; }
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card-info {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.drop-zone {
+  min-height: 100px;
+  border: 2px dashed transparent;
+  border-radius: 8px;
+  transition: border-color 0.3s;
+}
+
+.drop-zone.drag-over {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  padding: 8px 16px;
+  background: #333;
+  border: 1px solid #555;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">← Back to Dashboard</a>
+
+<h1 style="text-align: center; margin-bottom: 30px;">Maintenance Kanban Board</h1>
+
+<div class="kanban-board">
+  <div class="kanban-column new-column">
+    <div class="column-header">New Requests</div>
+    <div class="drop-zone" data-status="new" id="new-column"></div>
+  </div>
+  
+  <div class="kanban-column progress-column">
+    <div class="column-header">In Progress</div>
+    <div class="drop-zone" data-status="in_progress" id="progress-column"></div>
+  </div>
+  
+  <div class="kanban-column repaired-column">
+    <div class="column-header">Repaired</div>
+    <div class="drop-zone" data-status="repaired" id="repaired-column"></div>
+  </div>
+  
+  <div class="kanban-column scrap-column">
+    <div class="column-header">Scrap</div>
+    <div class="drop-zone" data-status="scrap" id="scrap-column"></div>
+  </div>
+</div>
+
+<script>
+// Load Kanban data on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'signin/index.html';
+    return;
+  }
+  loadKanbanData();
+});
+
+// Load Kanban data from backend
+async function loadKanbanData() {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch('http://localhost:3001/api/maintenance/kanban', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      displayKanbanCards(data);
+    }
+  } catch (error) {
+    console.error('Error loading kanban data:', error);
+  }
+}
+
+// Display cards in Kanban columns
+function displayKanbanCards(data) {
+  const columns = {
+    'new': document.getElementById('new-column'),
+    'in_progress': document.getElementById('progress-column'),
+    'repaired': document.getElementById('repaired-column'),
+    'scrap': document.getElementById('scrap-column')
+  };
+  
+  // Clear existing cards
+  Object.values(columns).forEach(column => column.innerHTML = '');
+  
+  // Add cards to columns
+  Object.keys(data).forEach(status => {
+    const column = columns[status];
+    data[status].forEach(request => {
+      const card = createKanbanCard(request);
+      column.appendChild(card);
+    });
+  });
+  
+  setupDragAndDrop();
+}
+
+// Create Kanban card element
+function createKanbanCard(request) {
+  const card = document.createElement('div');
+  card.className = 'kanban-card';
+  card.draggable = true;
+  card.dataset.requestId = request._id;
+  
+  card.innerHTML = `
+    <div class="card-title">${request.subject}</div>
+    <div class="card-info">Equipment: ${request.equipment?.name || 'N/A'}</div>
+    <div class="card-info">Technician: ${request.assignedTechnician?.name || 'Unassigned'}</div>
+    <div class="card-info">Priority: ${getPriorityText(request.priority)}</div>
+  `;
+  
+  return card;
+}
+
+function getPriorityText(priority) {
+  const map = { 1: 'Low', 2: 'Medium', 3: 'High' };
+  return map[priority] || 'Medium';
+}
+
+// Setup drag and drop functionality
+function setupDragAndDrop() {
+  const cards = document.querySelectorAll('.kanban-card');
+  const dropZones = document.querySelectorAll('.drop-zone');
+  
+  cards.forEach(card => {
+    card.addEventListener('dragstart', handleDragStart);
+    card.addEventListener('dragend', handleDragEnd);
+  });
+  
+  dropZones.forEach(zone => {
+    zone.addEventListener('dragover', handleDragOver);
+    zone.addEventListener('drop', handleDrop);
+    zone.addEventListener('dragenter', handleDragEnter);
+    zone.addEventListener('dragleave', handleDragLeave);
+  });
+}
+
+let draggedCard = null;
+
+function handleDragStart(e) {
+  draggedCard = this;
+  this.classList.add('dragging');
+}
+
+function handleDragEnd(e) {
+  this.classList.remove('dragging');
+  draggedCard = null;
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+}
+
+function handleDragEnter(e) {
+  e.preventDefault();
+  this.classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+  this.classList.remove('drag-over');
+}
+
+async function handleDrop(e) {
+  e.preventDefault();
+  this.classList.remove('drag-over');
+  
+  if (!draggedCard) return;
+  
+  const newStatus = this.dataset.status;
+  const requestId = draggedCard.dataset.requestId;
+  
+  // Update status in backend
+  const success = await updateRequestStatus(requestId, newStatus);
+  
+  if (success) {
+    // Move card to new column
+    this.appendChild(draggedCard);
+  } else {
+    alert('Failed to update request status');
+  }
+}
+
+// Update request status via API
+async function updateRequestStatus(requestId, newStatus) {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(`http://localhost:3001/api/maintenance/${requestId}/status`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: newStatus })
+    });
+    
+    return response.ok;
+  } catch (error) {
+    console.error('Error updating status:', error);
+    return false;
+  }
+}
+</script>
+
+</body>
+</html>

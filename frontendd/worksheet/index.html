@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maintenance Worksheet</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #0b0b0b;
+  color: #fff;
+  padding: 24px;
+}
+
+.worksheet-container {
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1px dashed #555;
+  border-radius: 18px;
+  padding: 30px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.back-btn {
+  padding: 8px 16px;
+  background: #333;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background: #444;
+}
+
+.complete-btn {
+  padding: 10px 20px;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.complete-btn:hover {
+  background: #218838;
+}
+
+.worksheet-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #111;
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.worksheet-section h3 {
+  color: #6aa9ff;
+  margin-bottom: 15px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 10px;
+  background: #1a1a1a;
+  border-radius: 8px;
+}
+
+.checklist-item input[type="checkbox"] {
+  margin-right: 12px;
+  transform: scale(1.2);
+}
+
+.checklist-item label {
+  flex: 1;
+  cursor: pointer;
+}
+
+.notes-area {
+  width: 100%;
+  min-height: 120px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 12px;
+  color: #fff;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #333;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #6aa9ff;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.status-indicator {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status-in-progress {
+  background: #ffc107;
+  color: #000;
+}
+</style>
+</head>
+<body>
+
+<div class="worksheet-container">
+  <div class="header">
+    <a href="../testactivity/index.html" class="back-btn">← Back to Request</a>
+    <div>
+      <span class="status-indicator status-in-progress">In Progress</span>
+    </div>
+    <button class="complete-btn" onclick="completeWork()">Complete Work</button>
+  </div>
+  
+  <h2 style="margin-bottom: 20px;">Maintenance Worksheet</h2>
+  
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  
+  <div class="worksheet-section">
+    <h3>Pre-Work Inspection</h3>
+    <div class="checklist-item">
+      <input type="checkbox" id="safety1" onchange="updateProgress()">
+      <label for="safety1">Safety equipment checked and ready</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="tools1" onchange="updateProgress()">
+      <label for="tools1">Required tools and parts available</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="area1" onchange="updateProgress()">
+      <label for="area1">Work area secured and isolated</label>
+    </div>
+  </div>
+  
+  <div class="worksheet-section">
+    <h3>Maintenance Tasks</h3>
+    <div class="checklist-item">
+      <input type="checkbox" id="task1" onchange="updateProgress()">
+      <label for="task1">Equipment powered down safely</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="task2" onchange="updateProgress()">
+      <label for="task2">Diagnostic tests completed</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="task3" onchange="updateProgress()">
+      <label for="task3">Faulty components identified</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="task4" onchange="updateProgress()">
+      <label for="task4">Repairs/replacements completed</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="task5" onchange="updateProgress()">
+      <label for="task5">System tested and verified</label>
+    </div>
+  </div>
+  
+  <div class="worksheet-section">
+    <h3>Post-Work Verification</h3>
+    <div class="checklist-item">
+      <input type="checkbox" id="verify1" onchange="updateProgress()">
+      <label for="verify1">Equipment functioning normally</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="verify2" onchange="updateProgress()">
+      <label for="verify2">Safety systems operational</label>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox" id="cleanup1" onchange="updateProgress()">
+      <label for="cleanup1">Work area cleaned and restored</label>
+    </div>
+  </div>
+  
+  <div class="worksheet-section">
+    <h3>Work Notes</h3>
+    <textarea class="notes-area" id="workNotes" placeholder="Enter detailed notes about the work performed, issues encountered, and recommendations..."></textarea>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+
+window.addEventListener('DOMContentLoaded', function() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = '../signin/index.html';
+    return;
+  }
+  
+  updateProgress();
+  loadSavedProgress();
+});
+
+function updateProgress() {
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+  const progress = (checked.length / checkboxes.length) * 100;
+  
+  document.getElementById('progressFill').style.width = progress + '%';
+  
+  // Save progress
+  saveProgress(progress);
+}
+
+async function saveProgress(progress) {
+  try {
+    const token = localStorage.getItem('token');
+    const notes = document.getElementById('workNotes').value;
+    
+    await fetch(`${API_BASE}/maintenance/test-activity/progress`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        progress: progress,
+        notes: notes,
+        timestamp: new Date().toISOString()
+      })
+    });
+  } catch (error) {
+    console.log('Progress saved locally (backend unavailable)');
+    localStorage.setItem('worksheetProgress', JSON.stringify({
+      progress: progress,
+      notes: document.getElementById('workNotes').value,
+      checkboxStates: getCheckboxStates()
+    }));
+  }
+}
+
+function getCheckboxStates() {
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  const states = {};
+  checkboxes.forEach(cb => {
+    states[cb.id] = cb.checked;
+  });
+  return states;
+}
+
+function loadSavedProgress() {
+  const saved = localStorage.getItem('worksheetProgress');
+  if (saved) {
+    const data = JSON.parse(saved);
+    document.getElementById('workNotes').value = data.notes || '';
+    
+    if (data.checkboxStates) {
+      Object.keys(data.checkboxStates).forEach(id => {
+        const checkbox = document.getElementById(id);
+        if (checkbox) {
+          checkbox.checked = data.checkboxStates[id];
+        }
+      });
+    }
+    
+    updateProgress();
+  }
+}
+
+async function completeWork() {
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+  
+  if (checked.length < checkboxes.length) {
+    if (!confirm('Not all tasks are completed. Are you sure you want to finish?')) {
+      return;
+    }
+  }
+  
+  try {
+    const token = localStorage.getItem('token');
+    
+    await fetch(`${API_BASE}/maintenance/test-activity`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'complete',
+        notes: document.getElementById('workNotes').value,
+        completedTasks: checked.length,
+        totalTasks: checkboxes.length
+      })
+    });
+    
+    alert('Work completed successfully!');
+    window.location.href = '../testactivity/index.html';
+    
+  } catch (error) {
+    // Fallback for demo
+    localStorage.setItem('workCompleted', 'true');
+    alert('Work completed successfully!');
+    window.location.href = '../testactivity/index.html';
+  }
+}
+
+// Auto-save notes
+document.getElementById('workNotes').addEventListener('input', function() {
+  clearTimeout(this.saveTimeout);
+  this.saveTimeout = setTimeout(() => {
+    const progress = (document.querySelectorAll('input[type="checkbox"]:checked').length / 
+                     document.querySelectorAll('input[type="checkbox"]').length) * 100;
+    saveProgress(progress);
+  }, 1000);
+});
+</script>
+
+</body>
+</html>

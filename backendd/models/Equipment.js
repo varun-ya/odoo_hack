@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const equipmentSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  code: { type: String, required: true, unique: true },
   serialNumber: { type: String, required: true, unique: true },
   category: { type: String, required: true },
   purchaseDate: Date,

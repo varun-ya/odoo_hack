@@ -15,6 +15,7 @@ const maintenanceRequestSchema = new mongoose.Schema({
     enum: ['new', 'in_progress', 'repaired', 'scrap'], 
     default: 'new' 
   },
+  priority: { type: Number, min: 1, max: 3, default: 2 },
   scheduledDate: Date,
   completedDate: Date,
   repairDuration: Number,

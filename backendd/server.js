@@ -19,8 +19,9 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/equipment', require('./routes/equipment'));
 app.use('/api/maintenance', require('./routes/maintenance'));
 app.use('/api/teams', require('./routes/teams'));
+app.use('/api/test-activity', require('./routes/testActivity'));
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

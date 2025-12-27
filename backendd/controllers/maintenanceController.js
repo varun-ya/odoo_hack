@@ -1,18 +1,20 @@
 const MaintenanceRequest = require('../models/MaintenanceRequest');
 const Equipment = require('../models/Equipment');
+const TestActivity = require('../models/TestActivity');
 
 // Get all maintenance requests with role-based filtering
 const getMaintenanceRequests = async (req, res) => {
   try {
     let filter = {};
     if (req.user.role === 'technician') {
-      filter = { assignedTechnician: req.user.id };
+      filter = { assignedTechnician: req.user._id };
     }
     
     const requests = await MaintenanceRequest.find(filter)
       .populate('equipment')
       .populate('team')
-      .populate('createdBy', 'name email');
+      .populate('createdBy', 'name email')
+      .populate('assignedTechnician', 'name email');
     res.json(requests);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -24,7 +26,7 @@ const getKanbanData = async (req, res) => {
   try {
     let filter = {};
     if (req.user.role === 'technician') {
-      filter = { assignedTechnician: req.user.id };
+      filter = { assignedTechnician: req.user._id };
     }
     
     const requests = await MaintenanceRequest.find(filter)
@@ -96,7 +98,7 @@ const createMaintenanceRequest = async (req, res) => {
       ...req.body,
       equipment: equipmentId,
       team: equipment.defaultTeam._id,
-      createdBy: req.user.id,
+      createdBy: req.user._id,
       status: 'new'
     });
     
@@ -170,11 +172,29 @@ const assignTechnician = async (req, res) => {
       return res.status(400).json({ error: 'Technician not in assigned team' });
     }
     
+    // Update request with assigned technician
     const updatedRequest = await MaintenanceRequest.findByIdAndUpdate(
       req.params.id,
-      { assignedTechnician: technicianId },
+      { 
+        assignedTechnician: technicianId,
+        status: request.status === 'new' ? 'in_progress' : request.status
+      },
       { new: true }
-    ).populate(['equipment', 'team', 'assignedTechnician']);
+    ).populate(['equipment', 'team', 'assignedTechnician', 'createdBy']);
+    
+    // Create notification for technician
+    const Notification = require('../models/Notification');
+    await new Notification({
+      recipient: technicianId,
+      type: 'assignment',
+      title: 'New Maintenance Assignment',
+      message: `You have been assigned to maintenance request: ${request.subject}`,
+      relatedRequest: request._id,
+      createdBy: req.user._id
+    }).save();
+    
+    // Log assignment activity
+    console.log(`Technician ${technician.name} assigned to maintenance request ${request.subject}`);
     
     res.json(updatedRequest);
   } catch (error) {
