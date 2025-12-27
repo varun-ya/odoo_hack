@@ -389,6 +389,11 @@ function deleteEquipment(btn) {
       localStorage.setItem('equipmentList', JSON.stringify(equipmentList));
     }
     
+    // Remove from equipment data
+    let equipmentData = JSON.parse(localStorage.getItem('equipmentData')) || [];
+    equipmentData = equipmentData.filter(item => item.name !== equipmentName);
+    localStorage.setItem('equipmentData', JSON.stringify(equipmentData));
+    
     row.remove();
   }
 }
@@ -408,6 +413,7 @@ document.getElementById('equipmentForm').addEventListener('submit', function(e) 
   
   // Update equipment list in localStorage
   const equipmentList = JSON.parse(localStorage.getItem('equipmentList')) || ['Samsung Monitor 15"', 'Acer Laptop'];
+  let equipmentData = JSON.parse(localStorage.getItem('equipmentData')) || [];
   
   if (editingRow) {
     // Update existing row
@@ -417,20 +423,28 @@ document.getElementById('equipmentForm').addEventListener('submit', function(e) 
       equipmentList[index] = formData.name;
     }
     
+    // Update in equipmentData array
+    const dataIndex = equipmentData.findIndex(item => item.name === oldName);
+    if (dataIndex > -1) {
+      equipmentData[dataIndex] = formData;
+    }
+    
     editingRow.cells[0].textContent = formData.name;
     editingRow.cells[1].textContent = formData.employee;
     editingRow.cells[2].textContent = formData.department;
     editingRow.cells[3].textContent = formData.serial;
     editingRow.cells[4].textContent = formData.technician;
-    editingRow.cells[5].textContent = formData.category;
+    editingRow.cells[5].innerHTML = `<span class="category-link" onclick="openCategory('${formData.category}')">${formData.category}</span>`;
     editingRow.cells[6].textContent = formData.company;
   } else {
     // Add new equipment to list
     equipmentList.push(formData.name);
+    equipmentData.push(formData);
     
     // Add new row
     const table = document.getElementById('equipmentTable');
     const newRow = table.insertRow();
+    newRow.setAttribute('data-equipment-id', formData.name);
     newRow.innerHTML = `
       <td>${formData.name}</td>
       <td>${formData.employee}</td>
@@ -448,8 +462,9 @@ document.getElementById('equipmentForm').addEventListener('submit', function(e) 
     `;
   }
   
-  // Save updated equipment list
+  // Save updated equipment list and data
   localStorage.setItem('equipmentList', JSON.stringify(equipmentList));
+  localStorage.setItem('equipmentData', JSON.stringify(equipmentData));
   
   closeModal();
 });
@@ -469,6 +484,42 @@ function goBack() {
 function openCategory(categoryName) {
   localStorage.setItem('selectedCategory', categoryName);
   window.location.href = 'equipment-categories.html';
+}
+
+// Load existing equipment on page load
+window.addEventListener('load', function() {
+  loadExistingEquipment();
+});
+
+function loadExistingEquipment() {
+  const equipmentData = JSON.parse(localStorage.getItem('equipmentData')) || [];
+  const tbody = document.getElementById('equipmentTable');
+  
+  // Clear existing dynamic rows (keep the default equipment)
+  const existingRows = tbody.querySelectorAll('tr[data-equipment-id]');
+  existingRows.forEach(row => row.remove());
+  
+  // Add stored equipment
+  equipmentData.forEach(equipment => {
+    const newRow = tbody.insertRow();
+    newRow.setAttribute('data-equipment-id', equipment.name);
+    
+    newRow.innerHTML = `
+      <td>${equipment.name}</td>
+      <td>${equipment.employee}</td>
+      <td>${equipment.department}</td>
+      <td>${equipment.serial}</td>
+      <td>${equipment.technician}</td>
+      <td><span class="category-link" onclick="openCategory('${equipment.category}')">${equipment.category}</span></td>
+      <td>${equipment.company}</td>
+      <td>
+        <div class="actions">
+          <button class="edit-btn" onclick="editEquipment(this)">Edit</button>
+          <button class="delete-btn" onclick="deleteEquipment(this)">Delete</button>
+        </div>
+      </td>
+    `;
+  });
 }
 </script>
 

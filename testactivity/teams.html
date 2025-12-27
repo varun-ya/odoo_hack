@@ -153,6 +153,22 @@ tbody tr:hover{
   color:#000;
   cursor:pointer;
 }
+
+/* ===== DELETE BUTTON ===== */
+.delete-btn{
+  padding:4px 8px;
+  border-radius:6px;
+  border:1px solid #ff4d4d;
+  background:transparent;
+  color:#ff4d4d;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.delete-btn:hover{
+  background:#ff4d4d;
+  color:#000;
+}
 </style>
 </head>
 
@@ -175,6 +191,7 @@ tbody tr:hover{
           <th>Team Name</th>
           <th>Team Members</th>
           <th>Company</th>
+          <th>Actions</th>
         </tr>
       </thead>
 
@@ -183,18 +200,21 @@ tbody tr:hover{
           <td>Internal Maintenance</td>
           <td>Anas Makari</td>
           <td>My Company (San Francisco)</td>
+          <td><button class="delete-btn" onclick="deleteTeam(this)">Delete</button></td>
         </tr>
 
         <tr>
           <td>Metrology</td>
           <td>Marc Demo</td>
           <td>My Company (San Francisco)</td>
+          <td><button class="delete-btn" onclick="deleteTeam(this)">Delete</button></td>
         </tr>
 
         <tr>
           <td>Subcontractor</td>
           <td>Maggie Davidson</td>
           <td>My Company (San Francisco)</td>
+          <td><button class="delete-btn" onclick="deleteTeam(this)">Delete</button></td>
         </tr>
       </tbody>
     </table>
@@ -247,6 +267,13 @@ function closeModal() {
   document.getElementById('teamModal').style.display = 'none';
 }
 
+function deleteTeam(btn) {
+  if (confirm('Are you sure you want to delete this team?')) {
+    const row = btn.closest('tr');
+    row.remove();
+  }
+}
+
 document.getElementById('teamForm').addEventListener('submit', function(e) {
   e.preventDefault();
   
@@ -263,6 +290,7 @@ document.getElementById('teamForm').addEventListener('submit', function(e) {
     <td>${formData.name}</td>
     <td>${formData.members}</td>
     <td>${formData.company}</td>
+    <td><button class="delete-btn" onclick="deleteTeam(this)">Delete</button></td>
   `;
   
   closeModal();

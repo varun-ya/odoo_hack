@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Maintenance Reports</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #0b0b0b;
+  color: #fff;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 14px 30px;
+  border-bottom: 1px solid #222;
+}
+
+.navbar h2 {
+  font-size: 18px;
+  margin-right: 40px;
+}
+
+.nav-links a {
+  margin-right: 25px;
+  text-decoration: none;
+  color: #cfcfcf;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nav-links a.active {
+  color: #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
+/* ===== TOP BAR ===== */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 25px 30px 10px;
+}
+
+.back-btn {
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: 1px solid #ffffff;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.back-btn:hover {
+  background: #ffffff;
+  color: #000;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* ===== CONTENT ===== */
+.content {
+  padding: 20px 30px;
+}
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.report-card {
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.report-card:hover {
+  border-color: #6aa9ff;
+  background: #151515;
+}
+
+.report-card h3 {
+  color: #6aa9ff;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.report-card p {
+  color: #bdbdbd;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ===== TABLE ===== */
+.table-container {
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #121212;
+}
+
+th, td {
+  padding: 14px;
+  text-align: left;
+  font-size: 13px;
+}
+
+th {
+  color: #bdbdbd;
+  font-weight: 500;
+}
+
+tbody tr {
+  border-top: 1px dashed #333;
+}
+
+tbody tr:hover {
+  background: #151515;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-new { background: #1f3b5c; color: #6aa9ff; }
+.status-progress { background: #2d1f0f; color: #ff9500; }
+.status-completed { background: #0f1a14; color: #2ecc71; }
+.status-overdue { background: #1a0f0f; color: #ff4d4d; }
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <h2>Maintenance</h2>
+  <div class="nav-links">
+    <a onclick="goToDashboard()">Dashboard</a>
+    <a onclick="goToCalendar()">Maintenance Calendar</a>
+    <a onclick="goToEquipment()">Equipment</a>
+    <a class="active">Reporting</a>
+    <a onclick="goToTeams()">Teams</a>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="back-btn" onclick="goToDashboard()">Back</button>
+  <div class="title">Maintenance Reports</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+  
+  <div class="reports-grid">
+    <div class="report-card" onclick="showRequestTracking()">
+      <h3>Request Tracking</h3>
+      <p>Track maintenance requests from creation to completion. Monitor progress, delays, and technician assignments.</p>
+    </div>
+    
+    <div class="report-card" onclick="showEquipmentHealth()">
+      <h3>Equipment Health</h3>
+      <p>Monitor equipment performance, maintenance history, and health indicators across all assets.</p>
+    </div>
+    
+    <div class="report-card" onclick="showTechnicianWorkload()">
+      <h3>Technician Workload</h3>
+      <p>Analyze technician utilization, task distribution, and performance metrics for resource optimization.</p>
+    </div>
+    
+    <div class="report-card" onclick="showMaintenanceCosts()">
+      <h3>Maintenance Costs</h3>
+      <p>Review maintenance expenses, budget allocation, and cost trends by equipment and time period.</p>
+    </div>
+  </div>
+
+  <!-- REQUEST TRACKING TABLE -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>Subject</th>
+          <th>Created Date</th>
+          <th>Technician</th>
+          <th>Status</th>
+          <th>Priority</th>
+          <th>Days Open</th>
+        </tr>
+      </thead>
+      <tbody id="trackingTableBody">
+        <tr>
+          <td>#001</td>
+          <td>Test activity</td>
+          <td>2024-01-15</td>
+          <td>Oster</td>
+          <td><span class="status-badge status-new">New Request</span></td>
+          <td>Medium</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>#002</td>
+          <td>Monitor calibration</td>
+          <td>2024-01-12</td>
+          <td>Sarah Johnson</td>
+          <td><span class="status-badge status-progress">In Progress</span></td>
+          <td>High</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td>#003</td>
+          <td>Laptop repair</td>
+          <td>2024-01-10</td>
+          <td>Mike Chen</td>
+          <td><span class="status-badge status-completed">Completed</span></td>
+          <td>Low</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>#004</td>
+          <td>Server maintenance</td>
+          <td>2024-01-08</td>
+          <td>Unassigned</td>
+          <td><span class="status-badge status-overdue">Overdue</span></td>
+          <td>Critical</td>
+          <td>10</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+function goToDashboard() {
+  window.location.href = 'index.html';
+}
+
+function goToCalendar() {
+  window.location.href = 'maintenance-calendar/index.html';
+}
+
+function goToEquipment() {
+  window.location.href = 'equipment/index.html';
+}
+
+function goToTeams() {
+  window.location.href = 'testactivity/teams.html';
+}
+
+function showRequestTracking() {
+  loadRequestTrackingData();
+}
+
+function showEquipmentHealth() {
+  alert('Equipment Health report - Coming soon!');
+}
+
+function showTechnicianWorkload() {
+  alert('Technician Workload report - Coming soon!');
+}
+
+function showMaintenanceCosts() {
+  alert('Maintenance Costs report - Coming soon!');
+}
+
+function loadRequestTrackingData() {
+  const requests = JSON.parse(localStorage.getItem('maintenanceRequests')) || [];
+  const tbody = document.getElementById('trackingTableBody');
+  
+  // Clear existing rows except default ones
+  const existingRows = tbody.querySelectorAll('tr[data-dynamic]');
+  existingRows.forEach(row => row.remove());
+  
+  // Add stored requests
+  requests.forEach((request, index) => {
+    const createdDate = new Date(request.requestDate || Date.now());
+    const daysOpen = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    const newRow = document.createElement('tr');
+    newRow.setAttribute('data-dynamic', 'true');
+    
+    let statusClass = 'status-new';
+    if (request.status.includes('Progress')) statusClass = 'status-progress';
+    else if (request.status.includes('Completed')) statusClass = 'status-completed';
+    else if (daysOpen > 7) statusClass = 'status-overdue';
+    
+    newRow.innerHTML = `
+      <td>#${String(index + 5).padStart(3, '0')}</td>
+      <td>${request.subject}</td>
+      <td>${createdDate.toLocaleDateString()}</td>
+      <td>${request.technician}</td>
+      <td><span class="status-badge ${statusClass}">${request.status}</span></td>
+      <td>${request.priority || 'Medium'}</td>
+      <td>${daysOpen}</td>
+    `;
+    
+    tbody.appendChild(newRow);
+  });
+}
+
+// Load data on page load
+window.addEventListener('load', function() {
+  loadRequestTrackingData();
+});
+</script>
+
+</body>
+</html>

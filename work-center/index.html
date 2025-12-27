@@ -26,6 +26,29 @@ body{
   padding:20px;
 }
 
+/* ===== TOP BAR ===== */
+.top-bar{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.btn{
+  padding:6px 16px;
+  border-radius:10px;
+  border:1px solid #ffffff;
+  background:transparent;
+  color:#ffffff;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.btn:hover{
+  background:#ffffff;
+  color:#000000;
+}
+
 /* ===== HEADER ===== */
 .header{
   font-size:18px;
@@ -83,12 +106,100 @@ tbody tr:hover{
   color:#cfcfcf;
   display:inline-block;
 }
+
+/* ===== MODAL ===== */
+.modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.8);
+  z-index:1000;
+}
+
+.modal-content{
+  background:#121212;
+  border:1px solid #333;
+  border-radius:12px;
+  padding:20px;
+  width:400px;
+  margin:50px auto;
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.close{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.form-group{
+  margin-bottom:15px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:5px;
+  color:#bdbdbd;
+  font-size:13px;
+}
+
+.form-group input, .form-group select{
+  width:100%;
+  padding:8px;
+  background:#111;
+  border:1px solid #444;
+  border-radius:6px;
+  color:#fff;
+  outline:none;
+}
+
+.save-btn{
+  padding:8px 16px;
+  background:#6aa9ff;
+  border:none;
+  border-radius:6px;
+  color:#000;
+  cursor:pointer;
+}
+
+/* ===== DELETE BUTTON ===== */
+.delete-btn{
+  padding:4px 8px;
+  border-radius:6px;
+  border:1px solid #ff4d4d;
+  background:transparent;
+  color:#ff4d4d;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.delete-btn:hover{
+  background:#ff4d4d;
+  color:#000;
+}
 </style>
 </head>
 
 <body>
 
 <div class="container">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <button class="btn" onclick="goBack()">Back</button>
+    <button class="btn" onclick="openNewModal()">New</button>
+  </div>
 
   <div class="header">Work Centers</div>
 
@@ -104,30 +215,33 @@ tbody tr:hover{
           <th class="right">Capacity</th>
           <th class="right">Time Efficiency</th>
           <th class="right">OEE Target</th>
+          <th>Actions</th>
         </tr>
       </thead>
 
-      <tbody>
-        <tr onclick="selectWorkCenter('Drill 1')">
-          <td>Drill 1</td>
-          <td>DRL-01</td>
-          <td><span class="tag">Manufacturing</span></td>
-          <td>Drill 2</td>
-          <td class="right">1.00</td>
-          <td class="right">1.00</td>
-          <td class="right">100.00</td>
-          <td class="right">34.59</td>
+      <tbody id="workCenterTable">
+        <tr>
+          <td onclick="selectWorkCenter('Drill 1')" style="cursor: pointer;">Drill 1</td>
+          <td onclick="selectWorkCenter('Drill 1')" style="cursor: pointer;">DRL-01</td>
+          <td onclick="selectWorkCenter('Drill 1')" style="cursor: pointer;"><span class="tag">Manufacturing</span></td>
+          <td onclick="selectWorkCenter('Drill 1')" style="cursor: pointer;">Drill 2</td>
+          <td onclick="selectWorkCenter('Drill 1')" style="cursor: pointer;" class="right">1.00</td>
+          <td onclick="selectWorkCenter('Drill 1')" style="cursor: pointer;" class="right">1.00</td>
+          <td onclick="selectWorkCenter('Drill 1')" style="cursor: pointer;" class="right">100.00</td>
+          <td onclick="selectWorkCenter('Drill 1')" style="cursor: pointer;" class="right">34.59</td>
+          <td><button class="delete-btn" onclick="deleteWorkCenter(event)">Delete</button></td>
         </tr>
 
-        <tr onclick="selectWorkCenter('Lathe Machine')">
-          <td>Lathe Machine</td>
-          <td>LTH-02</td>
-          <td><span class="tag">Assembly</span></td>
-          <td>Lathe Backup</td>
-          <td class="right">1.00</td>
-          <td class="right">1.00</td>
-          <td class="right">100.00</td>
-          <td class="right">90.00</td>
+        <tr>
+          <td onclick="selectWorkCenter('Lathe Machine')" style="cursor: pointer;">Lathe Machine</td>
+          <td onclick="selectWorkCenter('Lathe Machine')" style="cursor: pointer;">LTH-02</td>
+          <td onclick="selectWorkCenter('Lathe Machine')" style="cursor: pointer;"><span class="tag">Assembly</span></td>
+          <td onclick="selectWorkCenter('Lathe Machine')" style="cursor: pointer;">Lathe Backup</td>
+          <td onclick="selectWorkCenter('Lathe Machine')" style="cursor: pointer;" class="right">1.00</td>
+          <td onclick="selectWorkCenter('Lathe Machine')" style="cursor: pointer;" class="right">1.00</td>
+          <td onclick="selectWorkCenter('Lathe Machine')" style="cursor: pointer;" class="right">100.00</td>
+          <td onclick="selectWorkCenter('Lathe Machine')" style="cursor: pointer;" class="right">90.00</td>
+          <td><button class="delete-btn" onclick="deleteWorkCenter(event)">Delete</button></td>
         </tr>
       </tbody>
     </table>
@@ -135,10 +249,131 @@ tbody tr:hover{
 
 </div>
 
+<!-- MODAL -->
+<div id="workCenterModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Add Work Center</h3>
+      <button class="close" onclick="closeModal()">&times;</button>
+    </div>
+    
+    <form id="workCenterForm">
+      <div class="form-group">
+        <label>Work Center Name</label>
+        <input type="text" id="workCenterName" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Code</label>
+        <input type="text" id="workCenterCode" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Tag</label>
+        <select id="workCenterTag">
+          <option>Manufacturing</option>
+          <option>Assembly</option>
+          <option>Quality Control</option>
+          <option>Packaging</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Alternative Workcenters</label>
+        <input type="text" id="alternativeWorkcenters">
+      </div>
+      
+      <div class="form-group">
+        <label>Cost per hour</label>
+        <input type="number" id="costPerHour" value="1.00" step="0.01">
+      </div>
+      
+      <div class="form-group">
+        <label>Capacity</label>
+        <input type="number" id="capacity" value="1.00" step="0.01">
+      </div>
+      
+      <div class="form-group">
+        <label>Time Efficiency</label>
+        <input type="number" id="timeEfficiency" value="100.00" step="0.01">
+      </div>
+      
+      <div class="form-group">
+        <label>OEE Target</label>
+        <input type="number" id="oeeTarget" value="90.00" step="0.01">
+      </div>
+      
+      <button type="submit" class="save-btn">Save</button>
+    </form>
+  </div>
+</div>
+
 <script>
+function goBack() {
+  window.location.href = '../index.html';
+}
+
+function openNewModal() {
+  document.getElementById('workCenterModal').style.display = 'block';
+}
+
+function closeModal() {
+  document.getElementById('workCenterModal').style.display = 'none';
+  document.getElementById('workCenterForm').reset();
+}
+
 function selectWorkCenter(workCenterName) {
   localStorage.setItem('selectedWorkCenter', workCenterName);
   window.location.href = '../testactivity/index.html';
+}
+
+function deleteWorkCenter(event) {
+  event.stopPropagation();
+  
+  if (confirm('Are you sure you want to delete this work center?')) {
+    const row = event.target.closest('tr');
+    row.remove();
+  }
+}
+
+document.getElementById('workCenterForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const formData = {
+    name: document.getElementById('workCenterName').value,
+    code: document.getElementById('workCenterCode').value,
+    tag: document.getElementById('workCenterTag').value,
+    alternative: document.getElementById('alternativeWorkcenters').value,
+    costPerHour: document.getElementById('costPerHour').value,
+    capacity: document.getElementById('capacity').value,
+    timeEfficiency: document.getElementById('timeEfficiency').value,
+    oeeTarget: document.getElementById('oeeTarget').value
+  };
+  
+  const table = document.getElementById('workCenterTable');
+  const newRow = table.insertRow();
+  newRow.style.cursor = 'pointer';
+  
+  newRow.innerHTML = `
+    <td onclick="selectWorkCenter('${formData.name}')" style="cursor: pointer;">${formData.name}</td>
+    <td onclick="selectWorkCenter('${formData.name}')" style="cursor: pointer;">${formData.code}</td>
+    <td onclick="selectWorkCenter('${formData.name}')" style="cursor: pointer;"><span class="tag">${formData.tag}</span></td>
+    <td onclick="selectWorkCenter('${formData.name}')" style="cursor: pointer;">${formData.alternative}</td>
+    <td onclick="selectWorkCenter('${formData.name}')" style="cursor: pointer;" class="right">${formData.costPerHour}</td>
+    <td onclick="selectWorkCenter('${formData.name}')" style="cursor: pointer;" class="right">${formData.capacity}</td>
+    <td onclick="selectWorkCenter('${formData.name}')" style="cursor: pointer;" class="right">${formData.timeEfficiency}</td>
+    <td onclick="selectWorkCenter('${formData.name}')" style="cursor: pointer;" class="right">${formData.oeeTarget}</td>
+    <td><button class="delete-btn" onclick="deleteWorkCenter(event)">Delete</button></td>
+  `;
+  
+  closeModal();
+});
+
+window.onclick = function(event) {
+  const modal = document.getElementById('workCenterModal');
+  if (event.target === modal) {
+    closeModal();
+  }
 }
 </script>
 
