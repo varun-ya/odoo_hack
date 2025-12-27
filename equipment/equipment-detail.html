@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Equipment</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI", sans-serif;
+}
+
+body{
+  background:#0b0b0b;
+  color:#fff;
+  padding:20px;
+}
+
+/* ===== WRAPPER ===== */
+.wrapper{
+  border:1px solid #333;
+  border-radius:18px;
+  padding:20px;
+}
+
+/* ===== HEADER ===== */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.new-btn{
+  padding:6px 16px;
+  border-radius:10px;
+  border:1px solid #fff;
+  background:transparent;
+  color:#fff;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.smart-btn{
+  padding:6px 14px;
+  border-radius:10px;
+  border:1px solid #6aa9ff;
+  background:transparent;
+  color:#6aa9ff;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.smart-btn:hover{
+  background:#6aa9ff;
+  color:#000;
+}
+
+/* ===== GRID ===== */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+}
+
+/* ===== FIELD ===== */
+.field{
+  margin-bottom:18px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  color:#bdbdbd;
+  margin-bottom:6px;
+}
+
+.field p{
+  font-size:14px;
+  padding-bottom:6px;
+  border-bottom:1px solid #333;
+}
+
+/* ===== DESCRIPTION ===== */
+.description{
+  margin-top:20px;
+}
+
+.description p{
+  border-bottom:1px solid #333;
+  padding-bottom:10px;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <button class="new-btn" onclick="goBack()">Back</button>
+      <h3 id="equipmentTitle">Equipment</h3>
+    </div>
+
+    <!-- SMART BUTTON -->
+    <button class="smart-btn" onclick="openMaintenance()">🔧 Maintenance</button>
+  </div>
+
+  <!-- FORM GRID -->
+  <div class="grid">
+
+    <!-- LEFT -->
+    <div>
+      <div class="field">
+        <label>Name</label>
+        <p id="equipmentName">Samsung Monitor 15"</p>
+      </div>
+
+      <div class="field">
+        <label>Equipment Category</label>
+        <p id="equipmentCategory">Monitors</p>
+      </div>
+
+      <div class="field">
+        <label>Company</label>
+        <p id="equipmentCompany">My Company (San Francisco)</p>
+      </div>
+
+      <div class="field">
+        <label>Used By</label>
+        <p>Employee</p>
+      </div>
+
+      <div class="field">
+        <label>Maintenance Team</label>
+        <p>Internal Maintenance</p>
+      </div>
+
+      <div class="field">
+        <label>Assigned Date</label>
+        <p>12 / 24 / 2025</p>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+      <div class="field">
+        <label>Technician</label>
+        <p id="equipmentTechnician">Mitchell Admin</p>
+      </div>
+
+      <div class="field">
+        <label>Employee</label>
+        <p id="equipmentEmployee">Abigail Peterson</p>
+      </div>
+
+      <div class="field">
+        <label>Serial Number</label>
+        <p id="equipmentSerial">MT/25/2278</p>
+      </div>
+
+      <div class="field">
+        <label>Department</label>
+        <p id="equipmentDepartment">Admin</p>
+      </div>
+
+      <div class="field">
+        <label>Used in Location</label>
+        <p>—</p>
+      </div>
+
+      <div class="field">
+        <label>Work Center</label>
+        <p>—</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="description">
+    <label>Description</label>
+    <p></p>
+  </div>
+
+</div>
+
+<script>
+function openMaintenance(){
+  const equipmentName = document.getElementById('equipmentName').textContent;
+  localStorage.setItem('selectedEquipmentForMaintenance', equipmentName);
+  window.location.href = "equipment-maintenance-list.html";
+}
+
+function goBack(){
+  window.location.href = "index.html";
+}
+
+// Load equipment data from localStorage
+window.addEventListener('load', function() {
+  const selectedEquipment = localStorage.getItem('selectedEquipmentData');
+  
+  if (selectedEquipment) {
+    const equipment = JSON.parse(selectedEquipment);
+    
+    document.getElementById('equipmentTitle').textContent = equipment.name;
+    document.getElementById('equipmentName').textContent = equipment.name;
+    document.getElementById('equipmentCategory').textContent = equipment.category;
+    document.getElementById('equipmentCompany').textContent = equipment.company;
+    document.getElementById('equipmentTechnician').textContent = equipment.technician;
+    document.getElementById('equipmentEmployee').textContent = equipment.employee === '—' ? '—' : equipment.employee;
+    document.getElementById('equipmentSerial').textContent = equipment.serial;
+    document.getElementById('equipmentDepartment').textContent = equipment.department;
+    
+    localStorage.removeItem('selectedEquipmentData');
+  }
+});
+</script>
+
+</body>
+</html>
